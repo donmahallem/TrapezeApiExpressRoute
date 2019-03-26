@@ -2,8 +2,24 @@ import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-clien
 import * as express from "express";
 import {
 } from "./";
+import { RequestPromise } from "request-promise-native";
 const app: express.Router = express.Router();
 
+export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>, res: express.Response, next?: express.NextFunction): void => {
+    prom
+        .then((value: T) => {
+            res.json(value);
+        })
+        .catch((err: any) => {
+            if (next) {
+                next(err);
+            } else {
+                res.status(500).json({
+                    error: true
+                });
+            }
+        });
+}
 const trapezeApi: TrapezeApiClient = new TrapezeApiClient(process.argv[2]);
 const str: VehicleStorage = new VehicleStorage(trapezeApi, 30000);
 app.use((req, res, next) => {
@@ -11,13 +27,8 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-app.get("/api/geo/stations", (req, res) => {
-    trapezeApi.getStations()
-        .then((dataRes) => {
-            res.json(dataRes);
-        }).catch((err) => {
-            res.status(500).send("error");
-        });
+app.get("/api/geo/stations", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    promiseToResponse(trapezeApi.getStations(), res, next);
 });
 app.get("/api/geo/vehicles", (req, res) => {
     if (!isNaN(req.query.left) && !isNaN(req.query.left) && !isNaN(req.query.left) && !isNaN(req.query.left)) {
@@ -64,52 +75,22 @@ app.get("/api/trip/:id/passages", (req, res) => {
         });
 });
 
-app.get("/api/vehicle/:id/route", (req, res) => {
-    trapezeApi.getRouteByVehicleId(req.params.id)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((err) => {
-            res.status(500).send("err");
-        });
+app.get("/api/vehicle/:id/route", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    promiseToResponse(trapezeApi.getRouteByVehicleId(req.params.id), res, next);
 });
-app.get("/api/trip/:id/route", (req, res) => {
-    trapezeApi.getRouteByTripId(req.params.id)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((err) => {
-            res.status(500).send("err");
-        });
+app.get("/api/trip/:id/route", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    promiseToResponse(trapezeApi.getRouteByTripId(req.params.id), res, next);
 });
-app.get("/api/stop/:id/departures", (req, res) => {
-    trapezeApi.getStopPassages(req.params.id)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((err) => {
-            res.status(500).send("err");
-        });
+app.get("/api/stop/:id/departures", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    promiseToResponse(trapezeApi.getStopPassages(req.params.id), res, next);
 });
-app.get("/api/stop/:id/info", (req, res) => {
-    trapezeApi.getStopInfo(req.params.id)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((err) => {
-            res.status(500).send("err");
-        });
+app.get("/api/stop/:id/info", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    promiseToResponse(trapezeApi.getStopInfo(req.params.id), res, next);
 });
-app.get("/api/stopPoint/:id/info", (req, res) => {
-    trapezeApi.getStopPointInfo(req.params.id)
-        .then((result) => {
-            res.json(result);
-        })
-        .catch((err) => {
-            res.status(500).send("err");
-        });
+app.get("/api/stopPoint/:id/info", (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    promiseToResponse(trapezeApi.getStopPointInfo(req.params.id), res, next);
 });
-app.get("/api/geo/vehicle/:id", (req, res) => {
+app.get("/api/geo/vehicle/:id", (req: express.Request, res: express.Response, next: express.NextFunction) => {
     str.getVehicle(req.params.id)
         .then((result) => {
             res.send(result);
