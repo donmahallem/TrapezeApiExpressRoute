@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import { createTrapezeApiRoute } from './api-routes';
 import * as express from "express";
 import * as supertest from "supertest";
-import { VehicleEndpoints } from './endpoints';
+import { VehicleEndpoints, TripEndpoints, StopEndpoints, StopPointEndpoints, GeoEndpoints } from './endpoints';
 
 const validTestIds: string[] = [
     'test',
@@ -17,6 +17,12 @@ const invalidTestIds: string[] = [
     '1!234',
     'ot%20herUrl-'
 ];
+
+interface TestElement {
+    path: string;
+    fn: string;
+    obj: any;
+}
 describe('api-routes.ts', () => {
     describe('createTrapezeApiRoute()', () => {
         let app: express.Express;
@@ -96,56 +102,95 @@ describe('api-routes.ts', () => {
                     });
             });
         });
-        describe('/vehicle/:id/route', () => {
-            let stub: sinon.SinonStub;
-            before(() => {
-                stub = sinon.stub(VehicleEndpoints, "createVehicleInfoEndpoint");
-                stub.callsFake(() => {
-                    return (req, res, next) => {
-                        res.json(SUCCESS_RESPONSE);
-                    }
-                })
-            });
-            afterEach(() => {
-                stub.resetHistory();
-            });
-            after(() => {
-                stub.restore();
-            })
-            validTestIds.forEach((testId: string) => {
-                it('should pass for id "' + testId + '"', (done) => {
-                    supertest(app)
-                        .get('/vehicle/' + testId + '/route')
-                        .expect('Content-Type', /json/)
-                        .expect('Content-Length', SUCCESS_RESPONSE_LENGTH)
-                        .expect(200)
-                        .end(function (err, res) {
-                            if (err) {
-                                done(err);
-                                return;
-                            }
-                            expect(routeErrorStub.callCount).to.equal(0);
-                            expect(res.body).to.deep.equal(SUCCESS_RESPONSE);
-                            done();
-                        });
+        const testElements: TestElement[] = [
+            {
+                path: '/vehicle/:id/route',
+                obj: VehicleEndpoints,
+                fn: 'createVehicleInfoEndpoint'
+            },
+            {
+                path: '/trip/:id/passages',
+                obj: TripEndpoints,
+                fn: 'createTripPassagesEndpoint'
+            },
+            {
+                path: '/trip/:id/route',
+                obj: TripEndpoints,
+                fn: 'createTripRouteEndpoint'
+            },
+            {
+                path: '/stop/:id/departures',
+                obj: StopEndpoints,
+                fn: 'createStopDeparturesEndpoint'
+            },
+            {
+                path: '/stop/:id/info',
+                obj: StopEndpoints,
+                fn: 'createStopInfoEndpoint'
+            },
+            {
+                path: '/stopPoint/:id/info',
+                obj: StopPointEndpoints,
+                fn: 'createStopPointInfoEndpoint'
+            },
+            {
+                path: '/geo/vehicle/:id',
+                obj: GeoEndpoints,
+                fn: 'createVehicleLocationEndpoint'
+            }
+        ];
+        testElements.forEach((testElement: TestElement) => {
+            describe(testElement.path, () => {
+                let stub: sinon.SinonStub;
+                before(() => {
+                    stub = sinon.stub(testElement.obj, testElement.fn);
+                    stub.callsFake(() => {
+                        return (req, res, next) => {
+                            res.json(SUCCESS_RESPONSE);
+                        }
+                    })
                 });
-            });
-            invalidTestIds.forEach((testId: string) => {
-                it('should not pass for id "' + testId + '"', (done) => {
-                    supertest(app)
-                        .get('/vehicle/' + testId + '/route')
-                        .expect('Content-Type', /json/)
-                        .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
-                        .expect(404)
-                        .end(function (err, res) {
-                            if (err) {
-                                done(err);
-                                return;
-                            }
-                            expect(routeErrorStub.callCount).to.equal(0);
-                            expect(res.body).to.deep.equal(NOT_FOUND_RESPONSE);
-                            done();
-                        });
+                afterEach(() => {
+                    stub.resetHistory();
+                });
+                after(() => {
+                    stub.restore();
+                })
+                validTestIds.forEach((testId: string) => {
+                    it('should pass for id "' + testId + '"', (done) => {
+                        supertest(app)
+                            .get(testElement.path.replace(':id', testId))
+                            .expect('Content-Type', /json/)
+                            .expect('Content-Length', SUCCESS_RESPONSE_LENGTH)
+                            .expect(200)
+                            .end(function (err, res) {
+                                if (err) {
+                                    done(err);
+                                    return;
+                                }
+                                expect(routeErrorStub.callCount).to.equal(0);
+                                expect(res.body).to.deep.equal(SUCCESS_RESPONSE);
+                                done();
+                            });
+                    });
+                });
+                invalidTestIds.forEach((testId: string) => {
+                    it('should not pass for id "' + testId + '"', (done) => {
+                        supertest(app)
+                            .get(testElement.path.replace(':id', testId))
+                            .expect('Content-Type', /json/)
+                            .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
+                            .expect(404)
+                            .end(function (err, res) {
+                                if (err) {
+                                    done(err);
+                                    return;
+                                }
+                                expect(routeErrorStub.callCount).to.equal(0);
+                                expect(res.body).to.deep.equal(NOT_FOUND_RESPONSE);
+                                done();
+                            });
+                    });
                 });
             });
         });
