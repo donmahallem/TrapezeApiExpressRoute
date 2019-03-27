@@ -108,5 +108,97 @@ describe("endpoints/geo.ts", () => {
                 ]);
             });
         });
+        describe("createVehicleLocationsEndpoint(vehicleStorage)", () => {
+            let getVehiclesStub: sinon.SinonStub;
+            let getVehicleLocationsStub: sinon.SinonStub;
+            before(() => {
+                getVehiclesStub = sinon.stub(vehicleClient, "getVehicles");
+                getVehiclesStub.returns(methodStubResponse);
+                getVehicleLocationsStub = sinon.stub(apiClient, "getVehicleLocations");
+                getVehicleLocationsStub.returns([methodStubResponse, methodStubResponse]);
+            });
+            afterEach("test and reset stubs", () => {
+                getVehiclesStub.resetHistory();
+                getVehicleLocationsStub.resetHistory();
+            });
+            after(() => {
+                getVehiclesStub.restore();
+                getVehicleLocationsStub.restore();
+            });
+            const testQueryParams: {
+                top?: any;
+                bottom?: any;
+                left?: any;
+                right?: any;
+                queriesAll: boolean;
+            }[] = [
+                    {
+                        top: 29,
+                        left: 203,
+                        right: 2,
+                        bottom: 29,
+                        queriesAll: false
+                    },
+                    {
+                        top: '29',
+                        left: 203,
+                        right: 2,
+                        bottom: 29,
+                        queriesAll: false
+                    },
+                    {
+                        top: 29,
+                        left: 203,
+                        right: 2,
+                        bottom: '29',
+                        queriesAll: false
+                    },
+                    {
+                        top: '29',
+                        right: 2,
+                        bottom: 29,
+                        queriesAll: true
+                    }
+                ];
+            testQueryParams.forEach((testQueryParam) => {
+                if (testQueryParam.queriesAll === true) {
+                    describe('should query all vehicles', () => {
+                        it('yes');
+                    });
+                } else {
+                    describe('should query specific area - ' + JSON.stringify(testQueryParam), () => {
+                        const testQueryObject: any = {
+                            top: testQueryParam.top,
+                            left: testQueryParam.left,
+                            right: testQueryParam.right,
+                            bottom: testQueryParam.bottom,
+                        }
+                        afterEach(() => {
+                            expect(getVehiclesStub.callCount).to.equal(1, "getVehicle should have been called once");
+                            expect(getVehicleLocationsStub.callCount).to.equal(0, "getVehicleLocation should have been called once");
+                        });
+                        it("should pass on the provided parameters", () => {
+                            const endpoint: express.RequestHandler = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
+                            endpoint({ query: testQueryObject }, res, next);
+                            expect(getVehiclesStub.getCall(0).args).to.deep.equal([
+                                testQueryObject.left,
+                                testQueryObject.right,
+                                testQueryObject.top,
+                                testQueryObject.bottom
+                            ]);
+                        });
+                        it("should call inner methods correclty", () => {
+                            const endpoint: express.RequestHandler = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
+                            endpoint({ query: testQueryObject }, res, next);
+                            expect(promiseStub.getCall(0).args).to.deep.equal([
+                                methodStubResponse,
+                                res,
+                                next,
+                            ]);
+                        });
+                    });
+                }
+            });
+        });
     });
 });

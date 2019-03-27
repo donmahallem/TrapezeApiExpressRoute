@@ -9,9 +9,21 @@ export class GeoEndpoints {
         };
     }
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-                                                 vehicleStorage: VehicleStorage): express.RequestHandler {
+        vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            if (!isNaN(req.query.left) && !isNaN(req.query.left) && !isNaN(req.query.left) && !isNaN(req.query.left)) {
+            const validNumber: (inp: any) => boolean = (inp: any): boolean => {
+                if (inp) {
+                    if (typeof inp === "number") {
+                        return true;
+                    }
+                    return !isNaN(inp);
+                }
+                return false;
+            }
+            if (validNumber(req.query.left) &&
+                validNumber(req.query.right) &&
+                validNumber(req.query.top) &&
+                validNumber(req.query.bottom)) {
                 promiseToResponse(vehicleStorage.getVehicles(req.query.left,
                     req.query.right,
                     req.query.top,
