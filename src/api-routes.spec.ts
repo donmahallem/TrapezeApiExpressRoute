@@ -1,44 +1,44 @@
-import { expect } from 'chai';
-import 'mocha';
-import * as sinon from 'sinon';
-import { createTrapezeApiRoute } from './api-routes';
+import { expect } from "chai";
 import * as express from "express";
+import "mocha";
+import * as sinon from "sinon";
 import * as supertest from "supertest";
-import { VehicleEndpoints, TripEndpoints, StopEndpoints, StopPointEndpoints, GeoEndpoints } from './endpoints';
+import { createTrapezeApiRoute } from "./api-routes";
+import { GeoEndpoints, StopEndpoints, StopPointEndpoints, TripEndpoints, VehicleEndpoints } from "./endpoints";
 
 const validTestIds: string[] = [
-    'test',
-    '1234',
-    'otherUrl-',
-    '+otherUrl'
+    "test",
+    "1234",
+    "otherUrl-",
+    "+otherUrl",
 ];
 const invalidTestIds: string[] = [
-    ' test',
-    '1!234',
-    'ot%20herUrl-'
+    " test",
+    "1!234",
+    "ot%20herUrl-",
 ];
 
-interface TestElement {
-    path: string;
+interface ITestElement {
     fn: string;
     obj: any;
+    path: string;
 }
-describe('api-routes.ts', () => {
-    describe('createTrapezeApiRoute()', () => {
+describe("api-routes.ts", () => {
+    describe("createTrapezeApiRoute()", () => {
         let app: express.Express;
         let routeErrorStub: sinon.SinonStub;
         const NOT_FOUND_RESPONSE: any = { error: true, status: 404 };
-        const NOT_FOUND_RESPONSE_LENGTH: string = '' + JSON.stringify(NOT_FOUND_RESPONSE).length;
+        const NOT_FOUND_RESPONSE_LENGTH: string = "" + JSON.stringify(NOT_FOUND_RESPONSE).length;
         const SUCCESS_RESPONSE: any = { error: false, status: 200 };
-        const SUCCESS_RESPONSE_LENGTH: string = '' + JSON.stringify(SUCCESS_RESPONSE).length;
+        const SUCCESS_RESPONSE_LENGTH: string = "" + JSON.stringify(SUCCESS_RESPONSE).length;
         before(() => {
             routeErrorStub = sinon.stub();
             routeErrorStub.callsFake((err, req, res, next) => {
                 res.status(501).json(NOT_FOUND_RESPONSE);
-            })
+            });
         });
         beforeEach(() => {
-            const route = createTrapezeApiRoute('https://localhost:12345/');
+            const route = createTrapezeApiRoute("https://localhost:12345/");
             app = express();
             app.use(route);
             app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -52,30 +52,30 @@ describe('api-routes.ts', () => {
         afterEach(() => {
             routeErrorStub.resetHistory();
         });
-        describe('test testing setup', () => {
+        describe("test testing setup", () => {
             let stub: sinon.SinonStub;
             const testError: Error = new Error("test error");
             before(() => {
                 stub = sinon.stub(VehicleEndpoints, "createVehicleInfoEndpoint");
                 stub.callsFake(() => {
                     return (req, res, next) => {
-                        next(testError)
-                    }
-                })
+                        next(testError);
+                    };
+                });
             });
             afterEach(() => {
                 stub.resetHistory();
             });
             after(() => {
                 stub.restore();
-            })
-            it('should use the 404 handler', (done) => {
+            });
+            it("should use the 404 handler", (done) => {
                 supertest(app)
-                    .get('/unknown/route')
-                    .expect('Content-Type', /json/)
-                    .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
+                    .get("/unknown/route")
+                    .expect("Content-Type", /json/)
+                    .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
                     .expect(404)
-                    .end(function (err, res) {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -85,13 +85,13 @@ describe('api-routes.ts', () => {
                         done();
                     });
             });
-            it('should use the error handler', (done) => {
+            it("should use the error handler", (done) => {
                 supertest(app)
-                    .get('/vehicle/asdf/route')
-                    .expect('Content-Type', /json/)
-                    .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
+                    .get("/vehicle/asdf/route")
+                    .expect("Content-Type", /json/)
+                    .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
                     .expect(501)
-                    .end(function (err, res) {
+                    .end((err, res) => {
                         if (err) {
                             done(err);
                             return;
@@ -102,44 +102,44 @@ describe('api-routes.ts', () => {
                     });
             });
         });
-        const testElements: TestElement[] = [
+        const testElements: ITestElement[] = [
             {
-                path: '/vehicle/:id/route',
+                fn: "createVehicleInfoEndpoint",
                 obj: VehicleEndpoints,
-                fn: 'createVehicleInfoEndpoint'
+                path: "/vehicle/:id/route",
             },
             {
-                path: '/trip/:id/passages',
+                fn: "createTripPassagesEndpoint",
                 obj: TripEndpoints,
-                fn: 'createTripPassagesEndpoint'
+                path: "/trip/:id/passages",
             },
             {
-                path: '/trip/:id/route',
+                fn: "createTripRouteEndpoint",
                 obj: TripEndpoints,
-                fn: 'createTripRouteEndpoint'
+                path: "/trip/:id/route",
             },
             {
-                path: '/stop/:id/departures',
+                fn: "createStopDeparturesEndpoint",
                 obj: StopEndpoints,
-                fn: 'createStopDeparturesEndpoint'
+                path: "/stop/:id/departures",
             },
             {
-                path: '/stop/:id/info',
+                fn: "createStopInfoEndpoint",
                 obj: StopEndpoints,
-                fn: 'createStopInfoEndpoint'
+                path: "/stop/:id/info",
             },
             {
-                path: '/stopPoint/:id/info',
+                fn: "createStopPointInfoEndpoint",
                 obj: StopPointEndpoints,
-                fn: 'createStopPointInfoEndpoint'
+                path: "/stopPoint/:id/info",
             },
             {
-                path: '/geo/vehicle/:id',
+                fn: "createVehicleLocationEndpoint",
                 obj: GeoEndpoints,
-                fn: 'createVehicleLocationEndpoint'
-            }
+                path: "/geo/vehicle/:id",
+            },
         ];
-        testElements.forEach((testElement: TestElement) => {
+        testElements.forEach((testElement: ITestElement) => {
             describe(testElement.path, () => {
                 let stub: sinon.SinonStub;
                 before(() => {
@@ -147,23 +147,23 @@ describe('api-routes.ts', () => {
                     stub.callsFake(() => {
                         return (req, res, next) => {
                             res.json(SUCCESS_RESPONSE);
-                        }
-                    })
+                        };
+                    });
                 });
                 afterEach(() => {
                     stub.resetHistory();
                 });
                 after(() => {
                     stub.restore();
-                })
+                });
                 validTestIds.forEach((testId: string) => {
                     it('should pass for id "' + testId + '"', (done) => {
                         supertest(app)
-                            .get(testElement.path.replace(':id', testId))
-                            .expect('Content-Type', /json/)
-                            .expect('Content-Length', SUCCESS_RESPONSE_LENGTH)
+                            .get(testElement.path.replace(":id", testId))
+                            .expect("Content-Type", /json/)
+                            .expect("Content-Length", SUCCESS_RESPONSE_LENGTH)
                             .expect(200)
-                            .end(function (err, res) {
+                            .end((err, res) => {
                                 if (err) {
                                     done(err);
                                     return;
@@ -177,11 +177,11 @@ describe('api-routes.ts', () => {
                 invalidTestIds.forEach((testId: string) => {
                     it('should not pass for id "' + testId + '"', (done) => {
                         supertest(app)
-                            .get(testElement.path.replace(':id', testId))
-                            .expect('Content-Type', /json/)
-                            .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
+                            .get(testElement.path.replace(":id", testId))
+                            .expect("Content-Type", /json/)
+                            .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
                             .expect(404)
-                            .end(function (err, res) {
+                            .end((err, res) => {
                                 if (err) {
                                     done(err);
                                     return;
