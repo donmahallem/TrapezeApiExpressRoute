@@ -1,8 +1,8 @@
 import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
 import * as express from "express";
+import { RequestPromise } from "request-promise-native";
 import {
 } from "./";
-import { RequestPromise } from "request-promise-native";
 const app: express.Router = express.Router();
 
 export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>, res: express.Response, next?: express.NextFunction): void => {
@@ -15,11 +15,11 @@ export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>, res: 
                 next(err);
             } else {
                 res.status(500).json({
-                    error: true
+                    error: true,
                 });
             }
         });
-}
+};
 const trapezeApi: TrapezeApiClient = new TrapezeApiClient(process.argv[2]);
 const str: VehicleStorage = new VehicleStorage(trapezeApi, 30000);
 app.use((req, res, next) => {
