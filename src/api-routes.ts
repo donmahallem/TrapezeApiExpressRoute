@@ -24,14 +24,35 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         next();
     });
-    route.get("/api/geo/stations", GeoEndpoints.createStationLocationsEndpoint(trapezeApi));
-    route.get("/api/geo/vehicles", GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi, str));
-    route.get("/api/geo/vehicle/:id", GeoEndpoints.createVehicleLocationEndpoint(str));
-    route.get("/api/trip/:id/passages", TripEndpoints.createTripPassagesEndpoint(trapezeApi, str));
-    route.get("/api/trip/:id/route", TripEndpoints.createTripRouteEndpoint(trapezeApi));
-    route.get("/api/vehicle/:id/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
-    route.get("/api/stop/:id/departures", StopEndpoints.createStopDeparturesEndpoint(trapezeApi));
-    route.get("/api/stop/:id/info", StopEndpoints.createStopInfoEndpoint(trapezeApi));
-    route.get("/api/stopPoint/:id/info", StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
+    route.get("/geo/stations", GeoEndpoints.createStationLocationsEndpoint(trapezeApi));
+    route.get("/geo/vehicles", GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi, str));
+    route.get("/geo/vehicle/:id", GeoEndpoints.createVehicleLocationEndpoint(str));
+    route.get("/trip/:id/passages", TripEndpoints.createTripPassagesEndpoint(trapezeApi, str));
+    route.get("/trip/:id/route", TripEndpoints.createTripRouteEndpoint(trapezeApi));
+    /**
+     * @api {get} /vehicle/:id/route Request Vehicle Route
+     * @apiName GetVehicleRoute
+     * @apiGroup Vehicle
+     *
+     * @apiParam {String} id Vehicle id
+     */
+    route.get("/vehicle/:id/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
+    /**
+     * @api {get} /stop/:id/departures Request Stop Departures
+     * @apiName GetStopDepartures
+     * @apiGroup Stop
+     *
+     * @apiParam {String} id Stop id
+     */
+    route.get("/stop/:id/departures", StopEndpoints.createStopDeparturesEndpoint(trapezeApi));
+    /**
+     * @api {get} /stop/:id/info Request Stop Info
+     * @apiName GetStopInfo
+     * @apiGroup Stop
+     *
+     * @apiParam {String} id Stop id
+     */
+    route.get("/stop/:id/info", StopEndpoints.createStopInfoEndpoint(trapezeApi));
+    route.get("/stopPoint/:id/info", StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
     return route;
 };
