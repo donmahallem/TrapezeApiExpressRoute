@@ -9,16 +9,21 @@ env:
   - TEST_SUITE=build
   - TEST_SUITE=unit
   - TEST_SUITE=docs
+  - TEST_SUITE=api-docs
 matrix:
   exclude:
     - node_js: "8"
       env: TEST_SUITE=lint
     - node_js: "8"
       env: TEST_SUITE=docs
+    - node_js: "8"
+      env: TEST_SUITE=api-docs
     - node_js: "9"
       env: TEST_SUITE=lint
     - node_js: "9"
       env: TEST_SUITE=docs
+    - node_js: "9"
+      env: TEST_SUITE=api-docs
 cache:
   directories:
   - node_modules
@@ -45,7 +50,9 @@ jobs:
         repo: donmahallem/TrapezeApiExpressRoute
   - stage: github pages release
     node_js: '10'
-    script: npm run docs
+    script:
+    - npm run docs
+    - npm run api-docs
     if: branch = master
     deploy:
       provider: pages

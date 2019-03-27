@@ -21,7 +21,7 @@
         "test:build": "npm run build",
         "test:unit": "npm run test-ci",
         "test:docs": "npm run docs",
-        "test:apiDocs": "npm run api-docs"
+        "test:api-docs": "npm run api-docs"
     },
     "dependencies": {
         "@donmahallem/trapeze-api-client": "^1.2.0",
