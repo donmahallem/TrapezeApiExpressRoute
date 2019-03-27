@@ -1,8 +1,5 @@
 import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
 import * as express from "express";
-import { RequestPromise } from "request-promise-native";
-import {
-} from "./";
 import {
     GeoEndpoints,
     StopEndpoints,
@@ -36,7 +33,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      *
      * @apiParam {String} id Vehicle id
      */
-    route.get("/vehicle/:id/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
+    route.get("/vehicle/:id([a-z0-9A-Z\-\+]+)/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
     /**
      * @api {get} /stop/:id/departures Request Stop Departures
      * @apiName GetStopDepartures
