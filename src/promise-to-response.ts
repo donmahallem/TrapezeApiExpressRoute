@@ -12,7 +12,7 @@ export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>,
                                      next?: express.NextFunction): void => {
     prom
         .then((value: T) => {
-            res.json(value);
+            res.status(200).json(value);
         })
         .catch((err: any) => {
             if (next) {
