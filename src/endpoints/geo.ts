@@ -35,7 +35,7 @@ export class GeoEndpoints {
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
         vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            if (req.query.top || req.query.bottom || req.query.right || req.query.left) {
+            if (req.query && (req.query.top || req.query.bottom || req.query.right || req.query.left)) {
                 const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, geoFenceSchema);
                 if (result.valid) {
                     if (req.query.left >= req.query.right) {
