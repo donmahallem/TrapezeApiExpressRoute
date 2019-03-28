@@ -1,30 +1,28 @@
 import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
 import * as express from "express";
+import * as jsonschema from "jsonschema";
 import { promiseToResponse } from "../promise-to-response";
-import * as jsonschema from 'jsonschema';
-
 
 const numberPattern: jsonschema.Schema = {
     oneOf: [
         {
-            type: "number"
+            type: "number",
         }, {
+            pattern: "^/d+/$",
             type: "string",
-            pattern: "^/d+/$"
-        }
-    ]
+        },
+    ],
 };
 export const geoFenceSchema: jsonschema.Schema = {
-    type: "object",
     properties: {
-        top: numberPattern,
-        left: numberPattern,
         bottom: numberPattern,
-        right: numberPattern
+        left: numberPattern,
+        right: numberPattern,
+        top: numberPattern,
     },
-    required: ["top", "bottom", "right", "left"]
+    required: ["top", "bottom", "right", "left"],
+    type: "object",
 };
-
 
 export class GeoEndpoints {
     public static createStationLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
@@ -33,17 +31,17 @@ export class GeoEndpoints {
         };
     }
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-        vehicleStorage: VehicleStorage): express.RequestHandler {
+                                                 vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             if (req.query && (req.query.top || req.query.bottom || req.query.right || req.query.left)) {
                 const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, geoFenceSchema);
                 if (result.valid) {
                     if (req.query.left >= req.query.right) {
-                        next(new Error('left must be smaller than right'));
+                        next(new Error("left must be smaller than right"));
                         return;
                     }
                     if (req.query.bottom >= req.query.top) {
-                        next(new Error('bottom must be smaller than top'));
+                        next(new Error("bottom must be smaller than top"));
                         return;
                     }
                     promiseToResponse(vehicleStorage.getVehicles(req.query.left,
