@@ -4,7 +4,8 @@ import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
 import * as prom from "../promise-to-response";
-import { GeoEndpoints } from "./geo";
+import { GeoEndpoints, geoFenceSchema } from "./geo";
+import * as jsonschema from 'jsonschema';
 
 interface ITestEndpoint {
     endpointFn: string;
@@ -16,18 +17,21 @@ describe("endpoints/geo.ts", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
         const vehicleClient: VehicleStorage = new VehicleStorage(apiClient, 30000);
         let promiseStub: sinon.SinonStub;
+        let validateStub: sinon.SinonStub;
         before(() => {
             promiseStub = sinon.stub(prom, "promiseToResponse");
             promiseStub.resolves(true);
+            validateStub = sinon.stub(jsonschema, 'validate');
         });
 
         afterEach("test and reset promise stub", () => {
-            expect(promiseStub.callCount).to.equal(1);
             promiseStub.resetHistory();
+            validateStub.resetHistory();
         });
 
         after(() => {
             promiseStub.restore();
+            validateStub.restore();
         });
         const methodStubResponse: any = {
             method: true,
@@ -108,7 +112,7 @@ describe("endpoints/geo.ts", () => {
                 ]);
             });
         });
-        describe("createVehicleLocationsEndpoint(vehicleStorage)", () => {
+        describe("createVehicleLocationsEndpoint(client, vehicleStorage)", () => {
             let getVehiclesStub: sinon.SinonStub;
             let getVehicleLocationsStub: sinon.SinonStub;
             before(() => {
@@ -125,71 +129,43 @@ describe("endpoints/geo.ts", () => {
                 getVehiclesStub.restore();
                 getVehicleLocationsStub.restore();
             });
-            const testQueryParams: {
-                top?: any;
-                bottom?: any;
-                left?: any;
-                right?: any;
-                queriesAll: boolean;
-            }[] = [
-                    {
-                        top: 29,
-                        left: 203,
-                        right: 2,
-                        bottom: 29,
-                        queriesAll: false
-                    },
-                    {
-                        top: '29',
-                        left: 203,
-                        right: 2,
-                        bottom: 29,
-                        queriesAll: false
-                    },
-                    {
-                        top: 29,
-                        left: 203,
-                        right: 2,
-                        bottom: '29',
-                        queriesAll: false
-                    },
-                    {
-                        top: '29',
-                        right: 2,
-                        bottom: 29,
-                        queriesAll: true
-                    }
-                ];
-            testQueryParams.forEach((testQueryParam) => {
-                if (testQueryParam.queriesAll === true) {
-                    describe('should query all vehicles', () => {
-                        it('yes');
+            describe('atleast one query parameter is provided', () => {
+                const testQueryObjects: any[] = [{
+                    top: 29,
+                    bottom: 20
+                }, {
+                    top: 10,
+                    bottom: -20
+                }, {
+                    left: 20,
+                    right: "92"
+                }, {
+                    right: 10209,
+                    left: "9132"
+                }];
+                describe('validation test succeeds', () => {
+                    let endpoint: express.RequestHandler;
+                    before(() => {
+                        endpoint = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
                     });
-                } else {
-                    describe('should query specific area - ' + JSON.stringify(testQueryParam), () => {
-                        const testQueryObject: any = {
-                            top: testQueryParam.top,
-                            left: testQueryParam.left,
-                            right: testQueryParam.right,
-                            bottom: testQueryParam.bottom,
-                        }
-                        afterEach(() => {
+                    beforeEach(() => {
+                        validateStub.returns({ valid: true });
+                    });
+                    afterEach(() => {
+                    });
+                    testQueryObjects.forEach((testQueryObject) => {
+                        it("should pass with: " + JSON.stringify(testQueryObject), () => {
+                            endpoint({ query: testQueryObject }, res, next);
                             expect(getVehiclesStub.callCount).to.equal(1, "getVehicle should have been called once");
                             expect(getVehicleLocationsStub.callCount).to.equal(0, "getVehicleLocation should have been called once");
-                        });
-                        it("should pass on the provided parameters", () => {
-                            const endpoint: express.RequestHandler = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
-                            endpoint({ query: testQueryObject }, res, next);
-                            expect(getVehiclesStub.getCall(0).args).to.deep.equal([
-                                testQueryObject.left,
+                            expect(getVehiclesStub.getCall(0).args).to.deep
+                                .equal([testQueryObject.left,
                                 testQueryObject.right,
                                 testQueryObject.top,
-                                testQueryObject.bottom
-                            ]);
-                        });
-                        it("should call inner methods correclty", () => {
-                            const endpoint: express.RequestHandler = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
-                            endpoint({ query: testQueryObject }, res, next);
+                                testQueryObject.bottom]);
+                            expect(validateStub.callCount).to.equal(1);
+                            expect(validateStub.getCall(0).args).to.deep.equal([testQueryObject, geoFenceSchema]);
+                            expect(promiseStub.callCount).to.equal(1);
                             expect(promiseStub.getCall(0).args).to.deep.equal([
                                 methodStubResponse,
                                 res,
@@ -197,7 +173,37 @@ describe("endpoints/geo.ts", () => {
                             ]);
                         });
                     });
-                }
+                });
+                describe('validation test fails', () => {
+                    let endpoint: express.RequestHandler;
+                    let nextSpy: sinon.SinonSpy;
+                    before(() => {
+                        endpoint = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
+                        nextSpy = sinon.spy();
+                    });
+                    beforeEach(() => {
+                        validateStub.returns({
+                            valid: false,
+                            errors: [new Error("test error")]
+                        });
+                    });
+                    afterEach(() => {
+                        nextSpy.resetHistory();
+                    });
+                    testQueryObjects.forEach((testQueryObject) => {
+                        it("should not with: " + JSON.stringify(testQueryObject), () => {
+                            endpoint({ query: testQueryObject }, res, nextSpy);
+                            expect(getVehiclesStub.callCount).to.equal(0, "getVehicle should have been called once");
+                            expect(getVehicleLocationsStub.callCount).to.equal(0, "getVehicleLocation should have been called once");
+                            expect(validateStub.callCount).to.equal(1);
+                            expect(validateStub.getCall(0).args).to.deep.equal([testQueryObject, geoFenceSchema]);
+                            expect(promiseStub.callCount).to.equal(0);
+                            expect(nextSpy.callCount).to.equal(1);
+                            expect(nextSpy.getCall(0).args.length).to.equal(1);
+                            expect(nextSpy.getCall(0).args[0].message).to.equal(new Error('Invalid number or type of query parameters').message);
+                        });
+                    });
+                });
             });
         });
     });
