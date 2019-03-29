@@ -8,8 +8,8 @@ import { RequestPromise } from "request-promise-native";
  * @param next
  */
 export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>,
-    res: express.Response,
-    next?: express.NextFunction): void => {
+                                     res: express.Response,
+                                     next?: express.NextFunction): void => {
     prom
         .then((value: T) => {
             res.status(200).json(value);

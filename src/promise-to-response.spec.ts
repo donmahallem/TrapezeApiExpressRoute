@@ -1,16 +1,16 @@
 import { expect } from "chai";
 import * as express from "express";
+import { IncomingMessage, ServerResponse } from "http";
 import "mocha";
+import * as request from "request";
+import * as reqp from "request-promise-native";
 import * as sinon from "sinon";
 import { promiseToResponse } from "./promise-to-response";
-import * as reqp from 'request-promise-native';
-import { ServerResponse, IncomingMessage } from 'http';
-import * as request from 'request';
 interface ITestObject {
-    prom: Promise<any>,
+    prom: Promise<any>;
     nextSpyCallCount: number;
     statusSpyCallCount: number;
-};
+}
 describe("promise-to-response.ts", () => {
     describe("promiseToResponse(prom,res)", () => {
         let jsonSpy: sinon.SinonSpy;
@@ -36,17 +36,15 @@ describe("promise-to-response.ts", () => {
             nextSpy.resetHistory();
             statusStub.resetHistory();
         });
-        describe('promise rejects', () => {
-
-        });
-        describe('promise resolves', () => {
+        describe("promise resolves", () => {
             [true, false].forEach((nextProvided) => {
-                describe("next parameter " + (nextProvided ? '' : 'not') + " provided", () => {
+                describe("next parameter " + (nextProvided ? "" : "not") + " provided", () => {
                     it("should forward the resolved value to the response", (done) => {
-                        if (nextProvided)
+                        if (nextProvided) {
                             promiseToResponse(Promise.resolve(testResponse), resObj, nextSpy);
-                        else
+                        } else {
                             promiseToResponse(Promise.resolve(testResponse), resObj);
+                        }
                         setTimeout(() => {
                             expect(nextSpy.callCount).to.equal(0);
                             expect(statusStub.callCount).to.equal(1);
@@ -59,24 +57,24 @@ describe("promise-to-response.ts", () => {
                 });
             });
         });
-        describe('promise rejects', () => {
+        describe("promise rejects", () => {
             const testErrors: any[] = [
                 {
                     error: {
+                        message: "another message",
                         statusCode: 400,
-                        message: 'another message'
                     },
                     response: {
-                        statusCode: 400
-                    }
+                        statusCode: 400,
+                    },
                 },
                 {
-                    error: new Error('test erorr'),
+                    error: new Error("test erorr"),
                     response: {
-                        statusCode: 500
-                    }
+                        statusCode: 500,
+                    },
                 },
-            ]
+            ];
             describe("next parameter provided", () => {
                 testErrors.forEach((testError) => {
                     it("should forward the error to the next function", (done) => {

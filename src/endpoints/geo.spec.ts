@@ -13,17 +13,17 @@ interface ITestEndpoint {
 }
 
 describe("endpoints/geo.ts", () => {
-    describe('geoFenceSchema', () => {
+    describe("geoFenceSchema", () => {
         const baseObj: {
             top: number | string,
             bottom: number | string,
             left: number | string,
-            right: number | string
+            right: number | string,
         } = {
-            top: 20,
-            right: 30,
             bottom: 20,
-            left: 50
+            left: 50,
+            right: 30,
+            top: 20,
         };
         const testKey: string[] = [
             "top",
@@ -31,35 +31,37 @@ describe("endpoints/geo.ts", () => {
             "left",
             "bottom",
         ];
-        const testValues: { value: any, valid: boolean }[] = [
+        const testValues: Array<{ value: any, valid: boolean }> = [
             {
+                valid: false,
                 value: undefined,
-                valid: false
             },
             {
+                valid: true,
                 value: "-20",
-                valid: true
             }, {
+                valid: true,
                 value: 30,
-                valid: true
             }, {
+                valid: true,
                 value: "30",
-                valid: true
             }, {
+                valid: false,
                 value: false,
-                valid: false
-            }
+            },
         ];
-        testKey.forEach((testKey) => {
+        // tslint:disable-next-line:no-shadowed-variable
+        testKey.forEach((testKey: string) => {
             testValues.forEach((testValue) => {
-                it("should " + (testValue.valid ? '' : 'not ') + "pass on key '" + testKey + "' with value '" + testValue.value + "'", () => {
-                    const testObj: any = Object.assign({}, baseObj);
-                    testObj[testKey] = testValue.value;
-                    const result: jsonschema.ValidatorResult = jsonschema.validate(testObj, geoFenceSchema);
-                    expect(result.valid).to.equal(testValue.valid);
-                });
+                it("should " + (testValue.valid ? "" : "not ") + "pass on key '" +
+                    testKey + "' with value '" + testValue.value + "'", () => {
+                        const testObj: any = Object.assign({}, baseObj);
+                        testObj[testKey] = testValue.value;
+                        const result: jsonschema.ValidatorResult = jsonschema.validate(testObj, geoFenceSchema);
+                        expect(result.valid).to.equal(testValue.valid);
+                    });
             });
-        })
+        });
     });
     describe("GeoEndpoints", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
