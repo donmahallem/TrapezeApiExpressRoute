@@ -13,6 +13,54 @@ interface ITestEndpoint {
 }
 
 describe("endpoints/geo.ts", () => {
+    describe('geoFenceSchema', () => {
+        const baseObj: {
+            top: number | string,
+            bottom: number | string,
+            left: number | string,
+            right: number | string
+        } = {
+            top: 20,
+            right: 30,
+            bottom: 20,
+            left: 50
+        };
+        const testKey: string[] = [
+            "top",
+            "right",
+            "left",
+            "bottom",
+        ];
+        const testValues: { value: any, valid: boolean }[] = [
+            {
+                value: undefined,
+                valid: false
+            },
+            {
+                value: "-20",
+                valid: true
+            }, {
+                value: 30,
+                valid: true
+            }, {
+                value: "30",
+                valid: true
+            }, {
+                value: false,
+                valid: false
+            }
+        ];
+        testKey.forEach((testKey) => {
+            testValues.forEach((testValue) => {
+                it("should " + (testValue.valid ? '' : 'not ') + "pass on key '" + testKey + "' with value '" + testValue.value + "'", () => {
+                    const testObj: any = Object.assign({}, baseObj);
+                    testObj[testKey] = testValue.value;
+                    const result: jsonschema.ValidatorResult = jsonschema.validate(testObj, geoFenceSchema);
+                    expect(result.valid).to.equal(testValue.valid);
+                });
+            });
+        })
+    });
     describe("GeoEndpoints", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
         const vehicleClient: VehicleStorage = new VehicleStorage(apiClient, 30000);

@@ -8,7 +8,7 @@ const numberPattern: jsonschema.Schema = {
         {
             type: "number",
         }, {
-            pattern: "^/d+/$",
+            pattern: "^[\\+\\-]?\\d+$",
             type: "string",
         },
     ],
@@ -31,7 +31,7 @@ export class GeoEndpoints {
         };
     }
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-                                                 vehicleStorage: VehicleStorage): express.RequestHandler {
+        vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             if (req.query && (req.query.top || req.query.bottom || req.query.right || req.query.left)) {
                 const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, geoFenceSchema);
