@@ -8,7 +8,7 @@ const numberPattern: jsonschema.Schema = {
         {
             type: "number",
         }, {
-            pattern: "^/d+/$",
+            pattern: "^[\\+\\-]?\\d+$",
             type: "string",
         },
     ],
