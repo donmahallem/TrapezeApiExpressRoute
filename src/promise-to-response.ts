@@ -8,18 +8,20 @@ import { RequestPromise } from "request-promise-native";
  * @param next
  */
 export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>,
-                                     res: express.Response,
-                                     next?: express.NextFunction): void => {
+    res: express.Response,
+    next?: express.NextFunction): void => {
     prom
         .then((value: T) => {
-            res.json(value);
+            res.status(200).json(value);
         })
         .catch((err: any) => {
             if (next) {
                 next(err);
             } else {
-                res.status(500).json({
+                const code: number = err.statusCode ? err.statusCode : 500;
+                res.status(code).json({
                     error: true,
+                    statusCode: code,
                 });
             }
         });

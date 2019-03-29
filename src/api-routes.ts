@@ -1,8 +1,5 @@
 import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
 import * as express from "express";
-import { RequestPromise } from "request-promise-native";
-import {
-} from "./";
 import {
     GeoEndpoints,
     StopEndpoints,
@@ -26,9 +23,9 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
     });
     route.get("/geo/stations", GeoEndpoints.createStationLocationsEndpoint(trapezeApi));
     route.get("/geo/vehicles", GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi, str));
-    route.get("/geo/vehicle/:id", GeoEndpoints.createVehicleLocationEndpoint(str));
-    route.get("/trip/:id/passages", TripEndpoints.createTripPassagesEndpoint(trapezeApi, str));
-    route.get("/trip/:id/route", TripEndpoints.createTripRouteEndpoint(trapezeApi));
+    route.get("/geo/vehicle/:id([a-z0-9A-Z\-\+]+)", GeoEndpoints.createVehicleLocationEndpoint(str));
+    route.get("/trip/:id([a-z0-9A-Z\-\+]+)/passages", TripEndpoints.createTripPassagesEndpoint(trapezeApi, str));
+    route.get("/trip/:id([a-z0-9A-Z\-\+]+)/route", TripEndpoints.createTripRouteEndpoint(trapezeApi));
     /**
      * @api {get} /vehicle/:id/route Request Vehicle Route
      * @apiName GetVehicleRoute
@@ -36,7 +33,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      *
      * @apiParam {String} id Vehicle id
      */
-    route.get("/vehicle/:id/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
+    route.get("/vehicle/:id([a-z0-9A-Z\-\+]+)/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
     /**
      * @api {get} /stop/:id/departures Request Stop Departures
      * @apiName GetStopDepartures
@@ -44,7 +41,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      *
      * @apiParam {String} id Stop id
      */
-    route.get("/stop/:id/departures", StopEndpoints.createStopDeparturesEndpoint(trapezeApi));
+    route.get("/stop/:id([a-z0-9A-Z\-\+]+)/departures", StopEndpoints.createStopDeparturesEndpoint(trapezeApi));
     /**
      * @api {get} /stop/:id/info Request Stop Info
      * @apiName GetStopInfo
@@ -52,7 +49,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      *
      * @apiParam {String} id Stop id
      */
-    route.get("/stop/:id/info", StopEndpoints.createStopInfoEndpoint(trapezeApi));
-    route.get("/stopPoint/:id/info", StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
+    route.get("/stop/:id([a-z0-9A-Z\-\+]+)/info", StopEndpoints.createStopInfoEndpoint(trapezeApi));
+    route.get("/stopPoint/:id([a-z0-9A-Z\-\+]+)/info", StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
     return route;
 };
