@@ -1,4 +1,5 @@
 import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
+import { IVehicleLocation, IVehicleLocationList } from "@donmahallem/trapeze-api-types";
 import * as express from "express";
 import * as jsonschema from "jsonschema";
 import { promiseToResponse } from "../promise-to-response";
@@ -47,7 +48,13 @@ export class GeoEndpoints {
                     promiseToResponse(vehicleStorage.getVehicles(req.query.left,
                         req.query.right,
                         req.query.top,
-                        req.query.bottom), res, next);
+                        req.query.bottom)
+                        .then((vehicles: IVehicleLocation[]): IVehicleLocationList => {
+                            return {
+                                lastUpdate: Date.now(),
+                                vehicles,
+                            };
+                        }), res, next);
                 } else {
                     next(new Error("Invalid number or type of query parameters"));
                 }
