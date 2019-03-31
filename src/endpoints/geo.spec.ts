@@ -5,12 +5,7 @@ import * as jsonschema from "jsonschema";
 import "mocha";
 import * as sinon from "sinon";
 import * as prom from "../promise-to-response";
-import { GeoEndpoints, geoFenceSchema } from "./geo";
-
-interface ITestEndpoint {
-    endpointFn: string;
-    innerMethod: string;
-}
+import { geoFenceSchema, GeoEndpoints } from "./geo";
 
 describe("endpoints/geo.ts", () => {
     describe("geoFenceSchema", () => {
