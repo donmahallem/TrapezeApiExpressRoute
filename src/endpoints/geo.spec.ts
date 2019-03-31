@@ -167,7 +167,7 @@ describe("endpoints/geo.ts", () => {
             let getVehicleLocationsStub: sinon.SinonStub;
             before(() => {
                 getVehiclesStub = sinon.stub(vehicleClient, "getVehicles");
-                getVehiclesStub.returns(methodStubResponse);
+                getVehiclesStub.resolves(methodStubResponse);
                 getVehicleLocationsStub = sinon.stub(apiClient, "getVehicleLocations");
                 getVehicleLocationsStub.returns([methodStubResponse, methodStubResponse]);
             });
@@ -313,11 +313,17 @@ describe("endpoints/geo.ts", () => {
                             expect(validateStub.callCount).to.equal(1);
                             expect(validateStub.getCall(0).args).to.deep.equal([testQueryObject, geoFenceSchema]);
                             expect(promiseStub.callCount).to.equal(1);
-                            expect(promiseStub.getCall(0).args).to.deep.equal([
-                                methodStubResponse,
+                            expect(promiseStub.getCall(0).args[1]).to.deep.equal(
                                 res,
+                            );
+                            expect(promiseStub.getCall(0).args[2]).to.deep.equal(
                                 next,
-                            ]);
+                            );
+                            return promiseStub.getCall(0).args[0]
+                                .then((val) => {
+                                    expect(val.vehicles).to.deep.equal(methodStubResponse);
+                                    expect(val.lastUpdate).to.closeTo(Date.now(), 100);
+                                });
                         });
                     });
                 });
