@@ -1,8 +1,8 @@
 import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
+import { IVehicleLocation, IVehicleLocationList } from "@donmahallem/trapeze-api-types";
 import * as express from "express";
 import * as jsonschema from "jsonschema";
 import { promiseToResponse } from "../promise-to-response";
-import { IVehicleLocation, IVehicleLocationList } from "@donmahallem/trapeze-api-types";
 
 const numberPattern: jsonschema.Schema = {
     oneOf: [
@@ -32,7 +32,7 @@ export class GeoEndpoints {
         };
     }
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-        vehicleStorage: VehicleStorage): express.RequestHandler {
+                                                 vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             if (req.query && (req.query.top || req.query.bottom || req.query.right || req.query.left)) {
                 const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, geoFenceSchema);
@@ -52,7 +52,7 @@ export class GeoEndpoints {
                         .then((vehicles: IVehicleLocation[]): IVehicleLocationList => {
                             return {
                                 lastUpdate: Date.now(),
-                                vehicles: vehicles,
+                                vehicles,
                             };
                         }), res, next);
                 } else {
