@@ -16,11 +16,6 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
     const trapezeApi: TrapezeApiClient = new TrapezeApiClient(endpoint);
     const str: VehicleStorage = new VehicleStorage(trapezeApi, 30000);
     const route: express.Router = express.Router();
-    route.use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        next();
-    });
     route.get("/geo/stations", GeoEndpoints.createStationLocationsEndpoint(trapezeApi));
     route.get("/geo/vehicles", GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi, str));
     route.get("/geo/vehicle/:id([a-z0-9A-Z\-\+]+)", GeoEndpoints.createVehicleLocationEndpoint(str));

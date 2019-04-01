@@ -1,16 +1,7 @@
 import { expect } from "chai";
-import * as express from "express";
-import { IncomingMessage, ServerResponse } from "http";
 import "mocha";
-import * as request from "request";
-import * as reqp from "request-promise-native";
 import * as sinon from "sinon";
 import { promiseToResponse } from "./promise-to-response";
-interface ITestObject {
-    prom: Promise<any>;
-    nextSpyCallCount: number;
-    statusSpyCallCount: number;
-}
 describe("promise-to-response.ts", () => {
     describe("promiseToResponse(prom,res)", () => {
         let jsonSpy: sinon.SinonSpy;

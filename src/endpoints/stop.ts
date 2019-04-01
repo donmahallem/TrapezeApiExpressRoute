@@ -1,5 +1,5 @@
 
-import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
+import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
 import * as express from "express";
 import { promiseToResponse } from "../promise-to-response";
 
