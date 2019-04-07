@@ -4,14 +4,10 @@ import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
 import * as prom from "../promise-to-response";
+import { ITestEndpoint } from "./common-test.spec";
 import { StopEndpoints } from "./stop";
 
-interface ITestEndpoint {
-    endpointFn: string;
-    innerMethod: string;
-}
-
-const testEndpoints: ITestEndpoint[] = [
+const testEndpoints: Array<ITestEndpoint<StopEndpoints, TrapezeApiClient>> = [
     {
         endpointFn: "createStopInfoEndpoint",
         innerMethod: "getStopInfo",
