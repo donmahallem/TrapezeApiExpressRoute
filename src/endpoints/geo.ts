@@ -28,11 +28,11 @@ export const geoFenceSchema: jsonschema.Schema = {
 export class GeoEndpoints {
     public static createStationLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getStations(), res, next);
+            promiseToResponse(client.getStationLocations(), res, next);
         };
     }
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-                                                 vehicleStorage: VehicleStorage): express.RequestHandler {
+        vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             if (req.query && (req.query.top || req.query.bottom || req.query.right || req.query.left)) {
                 const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, geoFenceSchema);

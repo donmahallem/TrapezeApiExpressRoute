@@ -7,6 +7,7 @@ import {
     TripEndpoints,
     VehicleEndpoints,
 } from "./endpoints";
+import { SettingsEndpoints } from "./endpoints/settings";
 
 /**
  *
@@ -46,5 +47,9 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      */
     route.get("/stop/:id([a-z0-9A-Z\-\+]+)/info", StopEndpoints.createStopInfoEndpoint(trapezeApi));
     route.get("/stopPoint/:id([a-z0-9A-Z\-\+]+)/info", StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
+    /**
+     * @since 1.5.0
+     */
+    route.get("/settings", SettingsEndpoints.createSettingsEndpoint(trapezeApi));
     return route;
 };
