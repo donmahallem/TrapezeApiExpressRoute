@@ -4,8 +4,7 @@ import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
 import * as prom from "../promise-to-response";
-import { StopEndpoints } from "./stop";
-
+import { SettingsEndpoints } from "./settings";
 interface ITestEndpoint {
     endpointFn: string;
     innerMethod: string;
@@ -13,16 +12,12 @@ interface ITestEndpoint {
 
 const testEndpoints: ITestEndpoint[] = [
     {
-        endpointFn: "createStopInfoEndpoint",
-        innerMethod: "getStopInfo",
-    },
-    {
-        endpointFn: "createStopDeparturesEndpoint",
-        innerMethod: "getStopPassages",
+        endpointFn: "createSettingsEndpoint",
+        innerMethod: "getSettings",
     },
 ];
-describe("endpoints/stop.ts", () => {
-    describe("StopEndpoints", () => {
+describe("endpoints/settings.ts", () => {
+    describe("SettingsEndpoints", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
         let promiseStub: sinon.SinonStub;
         before(() => {
@@ -70,15 +65,13 @@ describe("endpoints/stop.ts", () => {
                     methodStub.restore();
                 });
                 it("should pass on the provided parameters", () => {
-                    const endpoint: express.RequestHandler = StopEndpoints[testEndpoint.endpointFn](apiClient);
+                    const endpoint: express.RequestHandler = SettingsEndpoints[testEndpoint.endpointFn](apiClient);
                     endpoint(req, res, next);
                     expect(methodStub.callCount).to.equal(1);
-                    expect(methodStub.getCall(0).args).to.deep.equal([
-                        req.params.id,
-                    ]);
+                    expect(methodStub.getCall(0).args).to.deep.equal([]);
                 });
                 it("should call inner methods correclty", () => {
-                    const endpoint: express.RequestHandler = StopEndpoints[testEndpoint.endpointFn](apiClient);
+                    const endpoint: express.RequestHandler = SettingsEndpoints[testEndpoint.endpointFn](apiClient);
                     endpoint(req, res, next);
                     expect(promiseStub.callCount).to.equal(1);
                     expect(promiseStub.getCall(0).args).to.deep.equal([

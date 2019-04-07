@@ -142,9 +142,9 @@ describe("api-routes.ts", () => {
             },
             {
                 fn: "createSettingsEndpoint",
+                noId: true,
                 obj: SettingsEndpoints,
                 path: "/settings",
-                noId: true
             },
         ];
         testElements.forEach((testElement: ITestElement) => {
