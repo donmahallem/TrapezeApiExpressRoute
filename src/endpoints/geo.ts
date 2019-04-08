@@ -28,7 +28,7 @@ export const geoFenceSchema: jsonschema.Schema = {
 export class GeoEndpoints {
     public static createStationLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getStations(), res, next);
+            promiseToResponse(client.getStationLocations(), res, next);
         };
     }
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient,

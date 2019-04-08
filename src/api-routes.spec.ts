@@ -5,6 +5,7 @@ import * as sinon from "sinon";
 import * as supertest from "supertest";
 import { createTrapezeApiRoute } from "./api-routes";
 import { GeoEndpoints, StopEndpoints, StopPointEndpoints, TripEndpoints, VehicleEndpoints } from "./endpoints";
+import { SettingsEndpoints } from "./endpoints/settings";
 
 const validTestIds: string[] = [
     "test",
@@ -22,6 +23,7 @@ interface ITestElement {
     fn: string;
     obj: any;
     path: string;
+    noId?: boolean;
 }
 describe("api-routes.ts", () => {
     describe("createTrapezeApiRoute()", () => {
@@ -138,6 +140,12 @@ describe("api-routes.ts", () => {
                 obj: GeoEndpoints,
                 path: "/geo/vehicle/:id",
             },
+            {
+                fn: "createSettingsEndpoint",
+                noId: true,
+                obj: SettingsEndpoints,
+                path: "/settings",
+            },
         ];
         testElements.forEach((testElement: ITestElement) => {
             describe(testElement.path, () => {
@@ -174,24 +182,26 @@ describe("api-routes.ts", () => {
                             });
                     });
                 });
-                invalidTestIds.forEach((testId: string) => {
-                    it('should not pass for id "' + testId + '"', (done) => {
-                        supertest(app)
-                            .get(testElement.path.replace(":id", testId))
-                            .expect("Content-Type", /json/)
-                            .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
-                            .expect(404)
-                            .end((err, res) => {
-                                if (err) {
-                                    done(err);
-                                    return;
-                                }
-                                expect(routeErrorStub.callCount).to.equal(0);
-                                expect(res.body).to.deep.equal(NOT_FOUND_RESPONSE);
-                                done();
-                            });
+                if (testElement.noId !== true) {
+                    invalidTestIds.forEach((testId: string) => {
+                        it('should not pass for id "' + testId + '"', (done) => {
+                            supertest(app)
+                                .get(testElement.path.replace(":id", testId))
+                                .expect("Content-Type", /json/)
+                                .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
+                                .expect(404)
+                                .end((err, res) => {
+                                    if (err) {
+                                        done(err);
+                                        return;
+                                    }
+                                    expect(routeErrorStub.callCount).to.equal(0);
+                                    expect(res.body).to.deep.equal(NOT_FOUND_RESPONSE);
+                                    done();
+                                });
+                        });
                     });
-                });
+                }
             });
         });
     });

@@ -98,7 +98,7 @@ describe("endpoints/geo.ts", () => {
         describe("createStationLocationsEndpoint(client)", () => {
             let methodStub: sinon.SinonStub;
             before(() => {
-                methodStub = sinon.stub(apiClient, "getStations");
+                methodStub = sinon.stub(apiClient, "getStationLocations");
                 methodStub.returns(methodStubResponse);
             });
             afterEach("test and reset stubs", () => {
