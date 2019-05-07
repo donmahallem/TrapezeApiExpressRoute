@@ -316,8 +316,7 @@ describe("endpoints/geo.ts", () => {
                             );
                             return promiseStub.getCall(0).args[0]
                                 .then((val) => {
-                                    expect(val.vehicles).to.deep.equal(methodStubResponse);
-                                    expect(val.lastUpdate).to.closeTo(Date.now(), 100);
+                                    expect(val).to.deep.equal(methodStubResponse);
                                 });
                         });
                     });
