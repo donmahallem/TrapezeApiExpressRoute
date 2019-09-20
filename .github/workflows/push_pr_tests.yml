@@ -68,7 +68,7 @@ jobs:
           ./cc-test-reporter format-coverage -t lcov -o ./coverage/climate12.json ./node12/lcov.info
       - name: Merge Reports
         run: |
-          ./cc-test-reporter sum-coverage ./coverage/climate8.info ./coverage/climate10.info ./coverage/climate12.info
+          ./cc-test-reporter sum-coverage ./coverage/climate8.json ./coverage/climate10.json ./coverage/climate12.json
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
       - name: Submit Coverage
