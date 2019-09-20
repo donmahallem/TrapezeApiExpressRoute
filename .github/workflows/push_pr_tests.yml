@@ -73,7 +73,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
       - name: Submit Coverage
         run: |
-          ./cc-test-reporter after-build --exit-code 0
+          ./cc-test-reporter upload-coverage
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
           GIT_COMMIT_SHA: $GITHUB_SHA
