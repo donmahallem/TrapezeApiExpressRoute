@@ -71,7 +71,7 @@ jobs:
           ./cc-test-reporter sum-coverage ./coverage/climate8.json ./coverage/climate10.json ./coverage/climate12.json
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
-      - name: Submit Coverage Report ${{ github.sha }}
+      - name: Submit Coverage ${{ github.ref }} Report
         run: |
           echo $GITHUB_REF
           ./cc-test-reporter upload-coverage
