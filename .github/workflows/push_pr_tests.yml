@@ -54,9 +54,6 @@ jobs:
         with:
           name: coverage_artifact_node12
           path: ./node12
-      - name: Merge Coverage files
-        run: |
-          lcov -a ./node8/lcov.info -a ./node10/lcov.info -a ./node12/lcov.info -o ./coverage/lcov.info
       - name: Setup Code Climate Coverage Reporter
         run: |
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
