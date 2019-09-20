@@ -56,7 +56,21 @@ jobs:
           path: ./node12
       - name: Merge Coverage files
         run: |
-          lcov -a ./node8/lcov.info -a ./node10/lcov.info -a ./node12/lcov.info -o ./combined_lcov.info
-      - name: LS
+          lcov -a ./node8/lcov.info -a ./node10/lcov.info -a ./node12/lcov.info -o ./coverage/lcov.info
+      - name: Setup Code Climate Coverage Reporter
         run: |
-          ls -R
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
+      - name: Merge Reports
+        run: |
+          ./cc-test-reporter sum-coverage ./node8/lcov.info ./node10/lcov.info ./node12/lcov.info
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
+      - name: Submit Coverage
+        run: |
+          ./cc-test-reporter after-build --exit-code 0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
