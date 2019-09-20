@@ -74,6 +74,7 @@ jobs:
       - name: Submit Coverage ${{ github.ref }} Report
         run: |
           echo $GITHUB_REF
+          echo $GITHUB_BRANCH
           ./cc-test-reporter upload-coverage
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
