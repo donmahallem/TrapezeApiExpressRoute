@@ -71,5 +71,5 @@ jobs:
           ./cc-test-reporter after-build --exit-code 0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.code_climate_id }}
-          GIT_COMMIT_SHA: ${{ GITHUB_SHA }}
-          GIT_BRANCH: ${{ GITHUB_REF }}
+          GIT_COMMIT_SHA: $GITHUB_SHA
+          GIT_BRANCH: $GITHUB_REF
