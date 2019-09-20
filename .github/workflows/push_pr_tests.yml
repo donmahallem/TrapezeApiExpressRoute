@@ -39,11 +39,24 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@master
-      - name: Download Coverage 
+      - name: Download Coverage for Node 8
         uses: actions/download-artifact@master
         with:
           name: coverage_artifact_node8
-          path: ./cool
+          path: ./node8
+      - name: Download Coverage for Node 10
+        uses: actions/download-artifact@master
+        with:
+          name: coverage_artifact_node10
+          path: ./node10
+      - name: Download Coverage for Node 12
+        uses: actions/download-artifact@master
+        with:
+          name: coverage_artifact_node12
+          path: ./node12
+      - name: Merge Coverage files
+        run: |
+          lcof -a ./node8/lcof.info -a ./node10/lcof.info -a ./node12/lcof.info -o ./combined_lcov.info
       - name: LS
         run: |
           ls -R
