@@ -56,7 +56,7 @@ jobs:
           path: ./node12
       - name: Merge Coverage files
         run: |
-          lcof -a ./node8/lcof.info -a ./node10/lcof.info -a ./node12/lcof.info -o ./combined_lcov.info
+          lcov -a ./node8/lcov.info -a ./node10/lcov.info -a ./node12/lcov.info -o ./combined_lcov.info
       - name: LS
         run: |
           ls -R
