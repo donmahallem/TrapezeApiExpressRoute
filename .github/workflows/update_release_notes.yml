@@ -1,3 +1,5 @@
+name: Create automatic release notes
+
 on:
   release:
     types: ['created','prereleased']

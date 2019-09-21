@@ -1,3 +1,5 @@
+name: Tests for Pushes and PRs
+
 on: [push,pull_request]
 
 jobs:
