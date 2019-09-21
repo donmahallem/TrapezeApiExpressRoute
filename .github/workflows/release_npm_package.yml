@@ -54,8 +54,8 @@ jobs:
         env:
           NPM_REGISTRY_SCHEME: 'https'
           NPM_STRICT_SSL: true
-          NPM_AUTH_TOKEN: 'testtoken'
+          NPM_AUTH_TOKEN: ${{ secrets.npm_publish_token }}
           NPM_REGISTRY_URL: 'registry.npmjs.org'
-      - name: Check config
+      - name: Npm publish
         run: |
-          cat $HOME/.npmrc
+          npm publish --access public
