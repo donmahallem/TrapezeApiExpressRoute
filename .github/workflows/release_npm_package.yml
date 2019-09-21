@@ -1,0 +1,55 @@
+on:
+  release:
+    types: ['published']
+  push:
+    types: ['*']
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '12','10', '8' ]
+    name: Node ${{ matrix.node }} Tests
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install -g npm-install-peers
+          npm-install-peers
+      - name: Run Lint
+        run: npm run test:lint
+      - name: Run Build
+        run: npm run test:build
+      - name: Run Unit Tests
+        run: npm run test:unit
+  upload_coverage:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    name: Publish Package to npmjs
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Run Build
+        run: npm run test:build
+      - name: Setup npm config
+        run: |
+          "//%s/:_authToken=%s\\nregistry=%s\\nstrict-ssl=%s" "$NPM_REGISTRY_URL" "$NPM_AUTH_TOKEN" "${NPM_REGISTRY_SCHEME}://$NPM_REGISTRY_URL" "${NPM_STRICT_SSL}" > "$HOME/.npmrc"
+        env:
+          NPM_REGISTRY_SCHEME: 'https'
+          NPM_STRICT_SSL: true
+          NPM_AUTH_TOKEN: 'testtoken'
+          NPM_REGISTRY_URL: 'registry.npmjs.org'
+      - name: Check config
+        run: |
+          cat $HOME/.npmrc
