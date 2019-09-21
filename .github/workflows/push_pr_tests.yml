@@ -1,0 +1,48 @@
+name: Tests for Pushes and PRs
+
+on: [push,pull_request]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '12','10', '8' ]
+    name: Node ${{ matrix.node }} Tests
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install -g npm-install-peers
+          npm-install-peers
+      - name: Run Lint
+        run: npm run test:lint
+      - name: Run Build
+        run: npm run test:build
+      - name: Run Unit Tests
+        run: npm run test:unit
+      - name: Upload Coverage
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel: true
+      - name: Create Docs
+        run: npm run test:docs
+  upload_coverage:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    name: Finalize Coverage Upload
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+      - name: Finalize Coverage
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
