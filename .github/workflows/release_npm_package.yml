@@ -3,8 +3,6 @@ name: Release Packages
 on:
   release:
     types: ['published']
-  push:
-    types: ['*']
 
 jobs:
   build_and_test:
