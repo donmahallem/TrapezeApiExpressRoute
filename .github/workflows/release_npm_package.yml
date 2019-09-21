@@ -40,6 +40,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install -g npm-install-peers
+          npm-install-peers
       - name: Run Build
         run: npm run test:build
       - name: Setup npm config
