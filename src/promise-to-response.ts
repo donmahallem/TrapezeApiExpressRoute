@@ -1,3 +1,7 @@
+/*!
+ * Source https://github.com/donmahallem/TrapezeApiExpressRoute
+ */
+
 import * as express from "express";
 import { RequestPromise } from "request-promise-native";
 

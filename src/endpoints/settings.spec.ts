@@ -1,3 +1,7 @@
+/*!
+ * Source https://github.com/donmahallem/TrapezeApiExpressRoute
+ */
+
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
 import { expect } from "chai";
 import * as express from "express";

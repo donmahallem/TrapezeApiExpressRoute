@@ -1,3 +1,7 @@
+/*!
+ * Source https://github.com/donmahallem/TrapezeApiExpressRoute
+ */
+
 import { expect } from "chai";
 import * as express from "express";
 import "mocha";
@@ -59,11 +63,10 @@ describe("api-routes.ts", () => {
             const testError: Error = new Error("test error");
             before(() => {
                 stub = sinon.stub(VehicleEndpoints, "createVehicleInfoEndpoint");
-                stub.callsFake(() => {
-                    return (req, res, next) => {
+                stub.callsFake(() =>
+                    (req, res, next) => {
                         next(testError);
-                    };
-                });
+                    });
             });
             afterEach(() => {
                 stub.resetHistory();
@@ -152,11 +155,10 @@ describe("api-routes.ts", () => {
                 let stub: sinon.SinonStub;
                 before(() => {
                     stub = sinon.stub(testElement.obj, testElement.fn);
-                    stub.callsFake(() => {
-                        return (req, res, next) => {
+                    stub.callsFake(() =>
+                        (req, res, next) => {
                             res.json(SUCCESS_RESPONSE);
-                        };
-                    });
+                        });
                 });
                 afterEach(() => {
                     stub.resetHistory();
@@ -182,7 +184,7 @@ describe("api-routes.ts", () => {
                             });
                     });
                 });
-                if (testElement.noId !== true) {
+                if (!testElement.noId) {
                     invalidTestIds.forEach((testId: string) => {
                         it('should not pass for id "' + testId + '"', (done) => {
                             supertest(app)
