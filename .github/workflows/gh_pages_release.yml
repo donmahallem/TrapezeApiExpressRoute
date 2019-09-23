@@ -26,8 +26,8 @@ jobs:
         run: npm run api-docs
       - name: Create Docs
         run: npm run docs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test List Docs Dir
+        run: find ./docs/.
       - name: deploy
         uses: peaceiris/actions-gh-pages@v2.3.1
         env:
