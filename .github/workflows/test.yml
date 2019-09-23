@@ -1,0 +1,16 @@
+name: Release Packages
+
+on: [push]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    name: Node ${{ matrix.node }} Tests
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+      - name: Run Unit Tests
+        run: |
+          echo $GITHUB_ACTION
+          echo $GITHUB_EVENT_NAME
+          echo $GITHUB_WORKFLOW
