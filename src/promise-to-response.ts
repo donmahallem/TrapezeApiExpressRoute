@@ -2,20 +2,26 @@ import * as express from "express";
 import { RequestPromise } from "request-promise-native";
 
 /**
- * takes promises and passes them on to an express response
- * @param prom
- * @param res
- * @param next
+ * Converts a http request promise to an expressjs response
+ * @param prom input promise
+ * @param res expressjs response object
+ * @param next expressjs next callback
  */
 export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>,
                                      res: express.Response,
                                      next?: express.NextFunction): void => {
     prom
         .then((value: T) => {
+            /**
+             * Promise resolved and the body will be forwarded to the requestee
+             */
             res.status(200).json(value);
         })
         .catch((err: any) => {
             if (next) {
+                /**
+                 * If a next callback is provided pass the error to next method
+                 */
                 next(err);
             } else {
                 const code: number = err.statusCode ? err.statusCode : 500;
