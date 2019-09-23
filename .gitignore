@@ -3,3 +3,6 @@ data/
 dist/
 .nyc_output/
 coverage/
+./docs/**
+!./docs/.gitignore
+!./docs/index.html

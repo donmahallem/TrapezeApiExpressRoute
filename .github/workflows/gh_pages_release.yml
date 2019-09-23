@@ -1,0 +1,38 @@
+name: Update GH Pages
+
+on:
+  push:
+    branches:
+    - master
+    - dev
+
+jobs:
+  update_gh_pages:
+    runs-on: ubuntu-latest
+    name: Create and Upload DOCS
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1 
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install -g npm-install-peers
+          npm-install-peers
+      - name: Create Api Documentation
+        run: npm run api-docs
+      - name: Create Docs
+        run: npm run docs
+      - name: Test List Docs Dir
+        run: find ./docs/.
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v2.3.2
+        env:
+          ACTIONS_DEPLOY_KEY: ${{ secrets.github_deploy_key }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: ./docs
+        with:
+          emptyCommits: false
