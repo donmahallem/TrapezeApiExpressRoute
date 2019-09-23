@@ -28,7 +28,7 @@ jobs:
         run: npm run docs
       - name: Test List Docs Dir
         run: find ./docs/.
-      - name: deploy
+      - name: Deploy Documentation
         uses: peaceiris/actions-gh-pages@v2.3.2
         env:
           ACTIONS_DEPLOY_KEY: ${{ secrets.github_deploy_key }}
