@@ -1,6 +1,6 @@
 {
     "name": "@donmahallem/trapeze-api-express-route",
-    "version": "1.8.0",
+    "version": "1.8.1",
     "description": "",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -23,30 +23,30 @@
         "test:api-docs": "npm run api-docs"
     },
     "dependencies": {
-        "@donmahallem/trapeze-api-client": "~2.3.0",
+        "@donmahallem/trapeze-api-client": "~2.4.2",
         "express": "~4.17.1",
         "jsonschema": "~1.2.4",
         "request": "~2.88.0",
-        "request-promise-native": "~1.0.7"
+        "request-promise-native": "~1.0.8"
     },
     "devDependencies": {
-        "@types/chai": "~4.2.3",
+        "@types/chai": "~4.2.5",
         "@types/mocha": "~5.2.7",
-        "@types/node": "~12.7.8",
+        "@types/node": "~12.12.7",
         "@types/request": "~2.48.3",
         "@types/request-promise-native": "~1.0.17",
-        "@types/sinon": "~7.0.13",
-        "apidoc": "~0.17.7",
+        "@types/sinon": "~7.5.0",
+        "apidoc": "~0.18.0",
         "chai": "~4.2.0",
-        "mocha": "~6.2.0",
-        "nodemon": "~1.19.2",
+        "mocha": "~6.2.2",
+        "nodemon": "~1.19.4",
         "nyc": "~14.1.1",
         "sinon": "~7.5.0",
         "supertest": "~4.0.2",
-        "ts-node": "~8.4.1",
-        "tslint": "~5.20.0",
-        "typedoc": "~0.15.0",
-        "typescript": "~3.6.3"
+        "ts-node": "~8.5.0",
+        "tslint": "~5.20.1",
+        "typedoc": "~0.15.1",
+        "typescript": "~3.7.2"
     },
     "peerDependencies": {
         "@donmahallem/trapeze-api-types": ">=1.2.0 <2.0.0"
