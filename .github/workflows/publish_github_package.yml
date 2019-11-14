@@ -17,6 +17,7 @@ jobs:
       - name: Install Packages
         run: |
           npm ci
+          npm install --no-save @donmahallem/trapeze-api-types
       - name: Build Package
         run: npm run build
       - name: Upload Package
