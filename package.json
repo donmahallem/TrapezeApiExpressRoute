@@ -1,6 +1,6 @@
 {
     "name": "@donmahallem/trapeze-api-express-route",
-    "version": "1.8.1",
+    "version": "1.8.2",
     "description": "",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -23,7 +23,7 @@
         "test:api-docs": "npm run api-docs"
     },
     "dependencies": {
-        "@donmahallem/trapeze-api-client": "~2.4.2",
+        "@donmahallem/trapeze-api-client": "~2.4.6",
         "express": "~4.17.1",
         "jsonschema": "~1.2.4",
         "request": "~2.88.0",
@@ -32,7 +32,7 @@
     "devDependencies": {
         "@types/chai": "~4.2.5",
         "@types/mocha": "~5.2.7",
-        "@types/node": "~12.12.7",
+        "@types/node": "~12.12.8",
         "@types/request": "~2.48.3",
         "@types/request-promise-native": "~1.0.17",
         "@types/sinon": "~7.5.0",
@@ -43,7 +43,7 @@
         "nyc": "~14.1.1",
         "sinon": "~7.5.0",
         "supertest": "~4.0.2",
-        "ts-node": "~8.5.0",
+        "ts-node": "~8.5.2",
         "tslint": "~5.20.1",
         "typedoc": "~0.15.2",
         "typescript": "~3.7.2"
