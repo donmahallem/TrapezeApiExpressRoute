@@ -23,7 +23,7 @@
         "test:api-docs": "npm run api-docs"
     },
     "dependencies": {
-        "@donmahallem/trapeze-api-client": "~2.4.8",
+        "@donmahallem/trapeze-api-client": "~2.4.9",
         "express": "~4.17.1",
         "jsonschema": "~1.2.5",
         "request": "~2.88.0",
