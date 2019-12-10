@@ -1,6 +1,6 @@
 define({
   "name": "Trapeze Api Route Docs",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "description": "",
   "title": "Trapeze Api Route",
   "sampleUrl": false,
@@ -8,7 +8,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-12-09T21:04:54.188Z",
+    "time": "2019-12-10T10:13:26.959Z",
     "url": "http://apidocjs.com",
     "version": "0.19.0"
   }
