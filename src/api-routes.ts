@@ -14,7 +14,7 @@ import {
 import { SettingsEndpoints } from "./endpoints/settings";
 
 /**
- *
+ * Does return an express router to be used to query the Trapeze Endpoint
  * @param endpoint example: http://test.domain/
  */
 export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endpoint: string): express.Router => {
