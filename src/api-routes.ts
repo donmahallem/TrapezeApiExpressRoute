@@ -2,7 +2,8 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
+import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
+import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 import * as express from "express";
 import {
     GeoEndpoints,
@@ -21,6 +22,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
     const trapezeApi: TrapezeApiClient = new TrapezeApiClient(endpoint);
     const str: VehicleStorage = new VehicleStorage(trapezeApi, 30000);
     const route: express.Router = express.Router();
+    const geoRouter: express.Router = route.use("/geo");
     /**
      * @api {get} /geo/stations Request station locations
      * @apiName GetStationsLocations
@@ -29,31 +31,65 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiVersion 1.0.0
      * @apiDeprecated use now (#Geo:StopLocations).
      */
-    /**
-     * @api {get} /geo/stops Request stop locations
-     * @apiName StopLocations
-     * @apiGroup Geo
-     *
-     * @apiVersion 1.5.0
-     */
-    route.get("/geo/stops", GeoEndpoints.createStationLocationsEndpoint(trapezeApi));
-    /**
-     * @api {get} /geo/vehicles Request vehicle locations
-     * @apiName GetVehicleLocations
-     * @apiGroup Geo
-     *
-     * @apiVersion 1.5.0
-     */
-    route.get("/geo/vehicles", GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi, str));
-    /**
-     * @api {get} /geo/vehicle/:id Request vehicle location
-     * @apiName GetVehicleLocation
-     * @apiGroup Geo
-     *
-     * @apiParam {String} id Vehicle id
-     * @apiVersion 1.5.0
-     */
-    route.get("/geo/vehicle/:id([a-z0-9A-Z\-\+]+)", GeoEndpoints.createVehicleLocationEndpoint(str));
+
+    geoRouter.use("/stops", GeoEndpoints.createQueryParameterMiddleware())
+        .route("")/**
+    * @api {get} /geo/stops Request stop locations
+    * @apiName StopLocations
+    * @apiGroup Geo
+    *
+    * @apiVersion 1.5.0
+    */
+        .get(GeoEndpoints.createStopLocationsEndpoint(trapezeApi));
+
+    geoRouter.use("/stopPoints", GeoEndpoints.createQueryParameterMiddleware())
+        .route("")/**
+        * @api {get} /geo/stopPoints Request stop point locations
+        * @apiName StopPointLocations
+        * @apiGroup Geo
+        *
+        * @apiVersion 2.0.0
+        */
+        .get(GeoEndpoints.createStopPointLocationsEndpoint(trapezeApi));
+    geoRouter.use("/vehicles", GeoEndpoints.createQueryParameterMiddleware())
+        .route("")
+        /**
+         * @api {head} /geo/vehicles Request vehicle locations
+         * @apiName HeadVehicleLocations
+         * @apiGroup Geo
+         *
+         * @apiVersion 1.9.0
+         */
+        .head(GeoEndpoints.createHeadVehicleLocationsEndpoint(trapezeApi, str))
+        /**
+         * @api {get} /geo/vehicles Request vehicle locations
+         * @apiName GetVehicleLocations
+         * @apiGroup Geo
+         *
+         * @apiVersion 1.5.0
+         */
+        .get(GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi, str));
+    geoRouter.route("/vehicle/:id([a-z0-9A-Z\-\+]+)")
+        /**
+         * @api {head} /geo/vehicle/:id Request vehicle location
+         * @apiName GetVehicleLocation
+         * @apiGroup Geo
+         *
+         * @apiParam {String} id Vehicle id
+         * @apiVersion 1.9.0
+         */
+        .head(GeoEndpoints.createHeadVehicleLocationEndpoint(str))
+        /**
+         * @api {get} /geo/vehicle/:id Request vehicle location
+         * @apiName GetVehicleLocation
+         * @apiGroup Geo
+         *
+         * @apiParam {String} id Vehicle id
+         * @apiVersion 1.5.0
+         */
+        .get(GeoEndpoints.createGetVehicleLocationEndpoint(str));
+
+    const tripRouter: express.Router = route.use("/trip/:id([a-z0-9A-Z\-\+]+)");
     /**
      * @api {get} /trip/:id/passages Request Trip Passages
      * @apiName GetTripPassages
@@ -62,7 +98,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiParam {String} id Vehicle id
      * @apiVersion 1.5.0
      */
-    route.get("/trip/:id([a-z0-9A-Z\-\+]+)/passages", TripEndpoints.createTripPassagesEndpoint(trapezeApi, str));
+    tripRouter.get("/passages", TripEndpoints.createTripPassagesEndpoint(trapezeApi, str));
     /**
      * @api {get} /trip/:id/route Request Vehicle Route
      * @apiName GetTripRoute
@@ -71,7 +107,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiParam {String} id Vehicle id
      * @apiVersion 1.5.0
      */
-    route.get("/trip/:id([a-z0-9A-Z\-\+]+)/route", TripEndpoints.createTripRouteEndpoint(trapezeApi));
+    tripRouter.get("/route", TripEndpoints.createTripRouteEndpoint(trapezeApi));
     /**
      * @api {get} /vehicle/:id/route Request Vehicle Route
      * @apiName GetVehicleRoute
