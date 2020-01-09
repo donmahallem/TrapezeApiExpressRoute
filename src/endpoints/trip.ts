@@ -2,10 +2,11 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
+import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
 import { TripId } from "@donmahallem/trapeze-api-types";
 import * as express from "express";
 import { promiseToResponse } from "../promise-to-response";
+import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 
 export class TripEndpoints {
     public static createTripRouteEndpoint(client: TrapezeApiClient): express.RequestHandler {
@@ -14,11 +15,11 @@ export class TripEndpoints {
         };
     }
     public static createTripPassagesEndpoint(client: TrapezeApiClient,
-                                             vehicleStorage: VehicleStorage): express.RequestHandler {
+        vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             const prom: Promise<any> = Promise
                 .all([client.getTripPassages(req.params.id as TripId, req.query.mode),
-                vehicleStorage.getVehicleByTripId(req.params.id)])
+                vehicleStorage.getVehicleByTripId(req.params.id as TripId)])
                 .then((result) => {
                     const resp: any = result[0];
                     resp.location = result[1];

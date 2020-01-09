@@ -3,12 +3,11 @@
  */
 
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
-import { VehicleStorage, TimestampedVehiclelocation } from "@donmahallem/trapeze-api-client-cache";
+import { VehicleStorage, TimestampedVehiclelocation, ISuccessStatus } from "@donmahallem/trapeze-api-client-cache";
 import {
     IStopLocations,
     IVehicleLocationList,
     VehicleId,
-    IVehicleLocation,
     IStopPointLocations,
 } from "@donmahallem/trapeze-api-types";
 import * as express from "express";
@@ -93,32 +92,18 @@ export class GeoEndpoints {
             next();
         };
     }
-    public static createHeadVehicleLocationsEndpoint(client: TrapezeApiClient,
-        vehicleStorage: VehicleStorage): express.RequestHandler {
+    public static createHeadVehicleLocationsEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            if (req.query && (req.query.top && req.query.bottom && req.query.right && req.query.left)) {
-                vehicleStorage.getVehicles(req.query.left,
-                    req.query.right,
-                    req.query.top,
-                    req.query.bottom)
-                    .then((val: IVehicleLocationList): void => {
-                        res.setHeader("ETag", "t" + val.lastUpdate);
-                        res.end();
-                    })
-                    .catch(next);
-            } else {
-                client.getVehicleLocations()
-                    .then((val: IVehicleLocationList): void => {
-                        res.setHeader("ETag", "t" + val.lastUpdate);
-                        res.end();
-                    })
-                    .catch(next);
-            }
+            vehicleStorage.fetchSuccessOrThrow()
+                .then((val: ISuccessStatus): void => {
+                    res.setHeader("ETag", "t" + val.lastUpdate);
+                    res.end();
+                })
+                .catch(next);
         };
     }
 
-    public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-        vehicleStorage: VehicleStorage): express.RequestHandler {
+    public static createGetVehicleLocationsEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             if (req.query && (req.query.top && req.query.bottom && req.query.right && req.query.left)) {
                 vehicleStorage.getVehicles(req.query.left,
@@ -132,7 +117,7 @@ export class GeoEndpoints {
                     .catch(next);
 
             } else {
-                client.getVehicleLocations()
+                vehicleStorage.getAllVehicles()
                     .then((value: IVehicleLocationList) => {
                         res.setHeader("ETag", "t" + value.lastUpdate);
                         res.json(value);

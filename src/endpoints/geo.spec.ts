@@ -2,7 +2,7 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
+import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
 import { expect } from "chai";
 import * as express from "express";
 import * as jsonschema from "jsonschema";
@@ -10,6 +10,7 @@ import "mocha";
 import * as sinon from "sinon";
 import * as prom from "../promise-to-response";
 import { geoFenceSchema, GeoEndpoints } from "./geo";
+import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 
 describe("endpoints/geo.ts", () => {
     describe("geoFenceSchema", () => {
@@ -102,7 +103,7 @@ describe("endpoints/geo.ts", () => {
         describe("createStationLocationsEndpoint(client)", () => {
             let methodStub: sinon.SinonStub;
             before(() => {
-                methodStub = sinon.stub(apiClient, "getStationLocations");
+                methodStub = sinon.stub(apiClient, "getStopLocations");
                 methodStub.returns(methodStubResponse);
             });
             afterEach("test and reset stubs", () => {
@@ -113,13 +114,13 @@ describe("endpoints/geo.ts", () => {
                 methodStub.restore();
             });
             it("should pass on the provided parameters", () => {
-                const endpoint: express.RequestHandler = GeoEndpoints.createStationLocationsEndpoint(apiClient);
+                const endpoint: express.RequestHandler = GeoEndpoints.createStopLocationsEndpoint(apiClient);
                 endpoint(req, res, next);
                 expect(methodStub.callCount).to.equal(1);
                 expect(methodStub.getCall(0).args).to.deep.equal([]);
             });
             it("should call inner methods correclty", () => {
-                const endpoint: express.RequestHandler = GeoEndpoints.createStationLocationsEndpoint(apiClient);
+                const endpoint: express.RequestHandler = GeoEndpoints.createStopLocationsEndpoint(apiClient);
                 endpoint(req, res, next);
                 expect(promiseStub.callCount).to.equal(1);
                 expect(promiseStub.getCall(0).args).to.deep.equal([
@@ -143,7 +144,7 @@ describe("endpoints/geo.ts", () => {
                 methodStub.restore();
             });
             it("should pass on the provided parameters", () => {
-                const endpoint: express.RequestHandler = GeoEndpoints.createVehicleLocationEndpoint(vehicleClient);
+                const endpoint: express.RequestHandler = GeoEndpoints.createGetVehicleLocationsEndpoint(vehicleClient);
                 endpoint(req, res, next);
                 expect(methodStub.callCount).to.equal(1);
                 expect(methodStub.getCall(0).args).to.deep.equal([
@@ -151,7 +152,7 @@ describe("endpoints/geo.ts", () => {
                 ]);
             });
             it("should call inner methods correclty", () => {
-                const endpoint: express.RequestHandler = GeoEndpoints.createVehicleLocationEndpoint(vehicleClient);
+                const endpoint: express.RequestHandler = GeoEndpoints.createGetVehicleLocationsEndpoint(vehicleClient);
                 endpoint(req, res, next);
                 expect(promiseStub.callCount).to.equal(1);
                 expect(promiseStub.getCall(0).args).to.deep.equal([
@@ -196,7 +197,7 @@ describe("endpoints/geo.ts", () => {
                     value: "test",
                 };
                 before(() => {
-                    endpoint = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
+                    endpoint = GeoEndpoints.createGetVehicleLocationsEndpoint(vehicleClient);
                 });
                 [{
                     query: {
@@ -232,7 +233,7 @@ describe("endpoints/geo.ts", () => {
                 let endpoint: express.RequestHandler;
                 let nextSpy: sinon.SinonSpy;
                 before(() => {
-                    endpoint = GeoEndpoints.createVehicleLocationsEndpoint(apiClient, vehicleClient);
+                    endpoint = GeoEndpoints.createGetVehicleLocationsEndpoint(vehicleClient);
                     nextSpy = sinon.spy();
                 });
                 afterEach(() => {
