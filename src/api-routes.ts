@@ -33,23 +33,25 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      */
 
     geoRouter.use("/stops", GeoEndpoints.createQueryParameterMiddleware())
-        .route("")/**
-    * @api {get} /geo/stops Request stop locations
-    * @apiName StopLocations
-    * @apiGroup Geo
-    *
-    * @apiVersion 1.5.0
-    */
+        .route("")
+        /**
+         * @api {get} /geo/stops Request stop locations
+         * @apiName StopLocations
+         * @apiGroup Geo
+         *
+         * @apiVersion 1.5.0
+         */
         .get(GeoEndpoints.createStopLocationsEndpoint(trapezeApi));
 
     geoRouter.use("/stopPoints", GeoEndpoints.createQueryParameterMiddleware())
-        .route("")/**
-        * @api {get} /geo/stopPoints Request stop point locations
-        * @apiName StopPointLocations
-        * @apiGroup Geo
-        *
-        * @apiVersion 2.0.0
-        */
+        .route("")
+        /**
+         * @api {get} /geo/stopPoints Request stop point locations
+         * @apiName StopPointLocations
+         * @apiGroup Geo
+         *
+         * @apiVersion 2.0.0
+         */
         .get(GeoEndpoints.createStopPointLocationsEndpoint(trapezeApi));
     geoRouter.use("/vehicles", GeoEndpoints.createQueryParameterMiddleware())
         .route("")
@@ -60,7 +62,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
          *
          * @apiVersion 1.9.0
          */
-        .head(GeoEndpoints.createHeadVehicleLocationsEndpoint(trapezeApi, str))
+        .head(GeoEndpoints.createHeadVehicleLocationsEndpoint(str))
         /**
          * @api {get} /geo/vehicles Request vehicle locations
          * @apiName GetVehicleLocations
@@ -68,7 +70,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
          *
          * @apiVersion 1.5.0
          */
-        .get(GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi, str));
+        .get(GeoEndpoints.createGetVehicleLocationsEndpoint(str));
     geoRouter.route("/vehicle/:id([a-z0-9A-Z\-\+]+)")
         /**
          * @api {head} /geo/vehicle/:id Request vehicle location

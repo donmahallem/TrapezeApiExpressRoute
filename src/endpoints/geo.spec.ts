@@ -3,6 +3,7 @@
  */
 
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
+import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 import { expect } from "chai";
 import * as express from "express";
 import * as jsonschema from "jsonschema";
@@ -10,7 +11,6 @@ import "mocha";
 import * as sinon from "sinon";
 import * as prom from "../promise-to-response";
 import { geoFenceSchema, GeoEndpoints } from "./geo";
-import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 
 describe("endpoints/geo.ts", () => {
     describe("geoFenceSchema", () => {

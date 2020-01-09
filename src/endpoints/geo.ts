@@ -3,12 +3,12 @@
  */
 
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
-import { VehicleStorage, TimestampedVehiclelocation, ISuccessStatus } from "@donmahallem/trapeze-api-client-cache";
+import { ISuccessStatus, TimestampedVehiclelocation, VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 import {
     IStopLocations,
+    IStopPointLocations,
     IVehicleLocationList,
     VehicleId,
-    IStopPointLocations,
 } from "@donmahallem/trapeze-api-types";
 import * as express from "express";
 import * as jsonschema from "jsonschema";
