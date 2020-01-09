@@ -23,7 +23,9 @@
         "test:api-docs": "npm run api-docs"
     },
     "dependencies": {
-        "@donmahallem/trapeze-api-client": "~2.4.9",
+        "@donmahallem/trapeze-api-client": "~3.0.1",
+        "@donmahallem/trapeze-api-client-cache": "~1.0.0",
+        "@donmahallem/trapeze-api-types": "~2.0.0",
         "express": "~4.17.1",
         "jsonschema": "~1.2.5",
         "request": "~2.88.0",
@@ -47,9 +49,6 @@
         "tslint": "~5.20.1",
         "typedoc": "~0.15.6",
         "typescript": "~3.7.4"
-    },
-    "peerDependencies": {
-        "@donmahallem/trapeze-api-types": ">=1.2.0 <2.0.0"
     },
     "nyc": {
         "include": [
