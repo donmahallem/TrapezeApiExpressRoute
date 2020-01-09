@@ -3,7 +3,11 @@
  */
 
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
-import { ISuccessStatus, TimestampedVehiclelocation, VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
+import {
+    ISuccessStatus,
+    TimestampedVehiclelocation,
+    VehicleStorage,
+} from "@donmahallem/trapeze-api-client-cache";
 import {
     IStopLocations,
     IStopPointLocations,
@@ -41,6 +45,9 @@ export const hasFenceQueryParameter: (req: express.Request) => boolean = (req: e
 };
 
 export class GeoEndpoints {
+    private constructor() {
+
+    }
     public static createStopLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             (hasFenceQueryParameter(req) ?
@@ -56,6 +63,7 @@ export class GeoEndpoints {
                 .catch(next);
         };
     }
+
     public static createStopPointLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             (hasFenceQueryParameter(req) ?
@@ -92,6 +100,7 @@ export class GeoEndpoints {
             next();
         };
     }
+
     public static createHeadVehicleLocationsEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             vehicleStorage.fetchSuccessOrThrow()
@@ -137,6 +146,7 @@ export class GeoEndpoints {
                 .catch(next);
         };
     }
+
     public static createHeadVehicleLocationEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             vehicleStorage.getVehicle(req.params.id as VehicleId)
