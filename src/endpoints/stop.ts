@@ -11,6 +11,7 @@ export class StopEndpoints {
         return async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> =>
             client.getStopInfo(req.params.id as StopId)
                 .then((value: IStopInfo) => {
+                    res.setHeader("Cache-Control", "public, max-age=60");
                     res.json(value);
                 })
                 .catch(next);
@@ -19,6 +20,7 @@ export class StopEndpoints {
         return async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> =>
             client.getStopPassages(req.params.id as StopId)
                 .then((value: IStopPassage) => {
+                    res.setHeader("Cache-Control", "public, max-age=10");
                     res.json(value);
                 })
                 .catch(next);
