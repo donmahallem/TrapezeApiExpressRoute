@@ -7,7 +7,6 @@ import { expect } from "chai";
 import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
-import * as prom from "../promise-to-response";
 import { ITestEndpoint } from "./common-test.spec";
 import { StopEndpoints } from "./stop";
 
@@ -24,20 +23,6 @@ const testEndpoints: Array<ITestEndpoint<StopEndpoints, TrapezeApiClient>> = [
 describe("endpoints/stop.ts", () => {
     describe("StopEndpoints", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
-        let promiseStub: sinon.SinonStub;
-        before(() => {
-            promiseStub = sinon.stub(prom, "promiseToResponse");
-            promiseStub.resolves(true);
-        });
-
-        afterEach("test and reset promise stub", () => {
-            expect(promiseStub.callCount).to.equal(1);
-            promiseStub.resetHistory();
-        });
-
-        after(() => {
-            promiseStub.restore();
-        });
         testEndpoints.forEach((testEndpoint: any) => {
             describe(testEndpoint.endpointFn + "(client)", () => {
                 const methodStubResponse: any = {
@@ -80,12 +65,6 @@ describe("endpoints/stop.ts", () => {
                 it("should call inner methods correclty", () => {
                     const endpoint: express.RequestHandler = StopEndpoints[testEndpoint.endpointFn](apiClient);
                     endpoint(req, res, next);
-                    expect(promiseStub.callCount).to.equal(1);
-                    expect(promiseStub.getCall(0).args).to.deep.equal([
-                        methodStubResponse,
-                        res,
-                        next,
-                    ]);
                 });
             });
         });

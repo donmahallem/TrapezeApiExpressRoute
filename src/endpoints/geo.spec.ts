@@ -9,7 +9,6 @@ import * as express from "express";
 import * as jsonschema from "jsonschema";
 import "mocha";
 import * as sinon from "sinon";
-import * as prom from "../promise-to-response";
 import { geoFenceSchema, GeoEndpoints } from "./geo";
 
 describe("endpoints/geo.ts", () => {
@@ -66,21 +65,16 @@ describe("endpoints/geo.ts", () => {
     describe("GeoEndpoints", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
         const vehicleClient: VehicleStorage = new VehicleStorage(apiClient, 30000);
-        let promiseStub: sinon.SinonStub;
         let validateStub: sinon.SinonStub;
         before(() => {
-            promiseStub = sinon.stub(prom, "promiseToResponse");
-            promiseStub.resolves(true);
             validateStub = sinon.stub(jsonschema, "validate");
         });
 
         afterEach("test and reset promise stub", () => {
-            promiseStub.resetHistory();
             validateStub.resetHistory();
         });
 
         after(() => {
-            promiseStub.restore();
             validateStub.restore();
         });
         const methodStubResponse: any = {
@@ -122,15 +116,9 @@ describe("endpoints/geo.ts", () => {
             it("should call inner methods correclty", () => {
                 const endpoint: express.RequestHandler = GeoEndpoints.createStopLocationsEndpoint(apiClient);
                 endpoint(req, res, next);
-                expect(promiseStub.callCount).to.equal(1);
-                expect(promiseStub.getCall(0).args).to.deep.equal([
-                    methodStubResponse,
-                    res,
-                    next,
-                ]);
             });
         });
-        describe("createVehicleLocationEndpoint(vehicleStorage)", () => {
+        describe("createGetVehicleLocationsEndpoint(vehicleStorage)", () => {
             let methodStub: sinon.SinonStub;
             before(() => {
                 methodStub = sinon.stub(vehicleClient, "getVehicle");
@@ -154,12 +142,6 @@ describe("endpoints/geo.ts", () => {
             it("should call inner methods correclty", () => {
                 const endpoint: express.RequestHandler = GeoEndpoints.createGetVehicleLocationsEndpoint(vehicleClient);
                 endpoint(req, res, next);
-                expect(promiseStub.callCount).to.equal(1);
-                expect(promiseStub.getCall(0).args).to.deep.equal([
-                    methodStubResponse,
-                    res,
-                    next,
-                ]);
             });
         });
         describe("createVehicleLocationsEndpoint(client, vehicleStorage)", () => {
@@ -218,12 +200,6 @@ describe("endpoints/geo.ts", () => {
                             });
                             it("should call inner methods correctly", () => {
                                 endpoint(reqValue, res, next);
-                                expect(promiseStub.callCount).to.equal(1);
-                                expect(promiseStub.getCall(0).args).to.deep.equal([
-                                    [methodStubResponse, methodStubResponse],
-                                    res,
-                                    next,
-                                ]);
                                 expect(getVehiclesStub.callCount).to.equal(0);
                             });
                         });
@@ -284,7 +260,6 @@ describe("endpoints/geo.ts", () => {
                                     expect(validateStub.callCount).to.equal(1);
                                     expect(validateStub.getCall(0).args).to
                                         .deep.equal([testQueryObject, geoFenceSchema]);
-                                    expect(promiseStub.callCount).to.equal(0);
                                     expect(nextSpy.callCount).to.equal(1);
                                     expect(nextSpy.getCall(0).args.length).to.equal(1);
                                     expect(nextSpy.getCall(0).args[0].message)
@@ -312,17 +287,6 @@ describe("endpoints/geo.ts", () => {
                                 testQueryObject.bottom]);
                             expect(validateStub.callCount).to.equal(1);
                             expect(validateStub.getCall(0).args).to.deep.equal([testQueryObject, geoFenceSchema]);
-                            expect(promiseStub.callCount).to.equal(1);
-                            expect(promiseStub.getCall(0).args[1]).to.deep.equal(
-                                res,
-                            );
-                            expect(promiseStub.getCall(0).args[2]).to.deep.equal(
-                                next,
-                            );
-                            return promiseStub.getCall(0).args[0]
-                                .then((val) => {
-                                    expect(val).to.deep.equal(methodStubResponse);
-                                });
                         });
                     });
                 });
@@ -351,7 +315,6 @@ describe("endpoints/geo.ts", () => {
                             expect(validateStub.callCount).to.equal(1);
                             expect(validateStub.getCall(0).args)
                                 .to.deep.equal([testQueryObject, geoFenceSchema]);
-                            expect(promiseStub.callCount).to.equal(0);
                             expect(nextSpy.callCount).to.equal(1);
                             expect(nextSpy.getCall(0).args.length).to.equal(1);
                             expect(nextSpy.getCall(0).args[0].message)

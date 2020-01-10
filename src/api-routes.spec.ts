@@ -23,12 +23,26 @@ const invalidTestIds: string[] = [
     "ot%20herUrl-",
 ];
 
+type GeoEndPointMethods = Exclude<keyof typeof GeoEndpoints, "prototype">;
+type StopEndpointMethods = Exclude<keyof typeof StopEndpoints, "prototype">;
+type SettingEndpointMethods = Exclude<keyof typeof SettingsEndpoints, "prototype">;
+type TripEndpointMethods = Exclude<keyof typeof TripEndpoints, "prototype">;
+type StopPointEndpointMethods = Exclude<keyof typeof StopPointEndpoints, "prototype">;
+type VehicleEndpointMethods = Exclude<keyof typeof VehicleEndpoints, "prototype">;
+type AnyEndpointMethod = Exclude<GeoEndPointMethods |
+    StopEndpointMethods |
+    SettingEndpointMethods |
+    TripEndpointMethods |
+    StopEndpointMethods |
+    VehicleEndpointMethods |
+    StopPointEndpointMethods, "createQueryParameterMiddleware">;
 interface ITestElement {
-    fn: string;
     obj: any;
     path: string;
     noId?: boolean;
+    method: "GET" | "HEAD";
 }
+type TestElements = Record<AnyEndpointMethod, ITestElement>;
 describe("api-routes.ts", () => {
     describe("createTrapezeApiRoute()", () => {
         let app: express.Express;
@@ -77,9 +91,9 @@ describe("api-routes.ts", () => {
             it("should use the 404 handler", (done) => {
                 supertest(app)
                     .get("/unknown/route")
+                    .expect(404)
                     .expect("Content-Type", /json/)
                     .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
-                    .expect(404)
                     .end((err, res) => {
                         if (err) {
                             done(err);
@@ -107,104 +121,136 @@ describe("api-routes.ts", () => {
                     });
             });
         });
-        const testElements: ITestElement[] = [
-            {
-                fn: "createVehicleInfoEndpoint",
+        const testElements: TestElements = {
+            createVehicleInfoEndpoint: {
+                method: "GET",
                 obj: VehicleEndpoints,
                 path: "/vehicle/:id/route",
             },
-            {
-                fn: "createTripPassagesEndpoint",
+            createTripPassagesEndpoint: {
+                method: "GET",
                 obj: TripEndpoints,
                 path: "/trip/:id/passages",
             },
-            {
-                fn: "createTripRouteEndpoint",
+            createTripRouteEndpoint: {
+                method: "GET",
                 obj: TripEndpoints,
                 path: "/trip/:id/route",
             },
-            {
-                fn: "createStopDeparturesEndpoint",
+            createStopDeparturesEndpoint: {
+                method: "GET",
                 obj: StopEndpoints,
                 path: "/stop/:id/departures",
             },
-            {
-                fn: "createStopInfoEndpoint",
+            createStopInfoEndpoint: {
+                method: "GET",
                 obj: StopEndpoints,
                 path: "/stop/:id/info",
             },
-            {
-                fn: "createStopPointInfoEndpoint",
+            createStopPointInfoEndpoint: {
+                method: "GET",
                 obj: StopPointEndpoints,
                 path: "/stopPoint/:id/info",
             },
-            {
-                fn: "createVehicleLocationEndpoint",
+            createGetVehicleLocationEndpoint: {
+                method: "GET",
                 obj: GeoEndpoints,
                 path: "/geo/vehicle/:id",
             },
-            {
-                fn: "createSettingsEndpoint",
+            createSettingsEndpoint: {
+                method: "GET",
                 noId: true,
                 obj: SettingsEndpoints,
                 path: "/settings",
             },
-        ];
-        testElements.forEach((testElement: ITestElement) => {
-            describe(testElement.path, () => {
-                let stub: sinon.SinonStub;
-                before(() => {
-                    stub = sinon.stub(testElement.obj, testElement.fn);
-                    stub.callsFake(() =>
-                        (req, res, next) => {
-                            res.json(SUCCESS_RESPONSE);
-                        });
-                });
-                afterEach(() => {
-                    stub.resetHistory();
-                });
-                after(() => {
-                    stub.restore();
-                });
-                validTestIds.forEach((testId: string) => {
-                    it('should pass for id "' + testId + '"', (done) => {
-                        supertest(app)
-                            .get(testElement.path.replace(":id", testId))
-                            .expect("Content-Type", /json/)
-                            .expect("Content-Length", SUCCESS_RESPONSE_LENGTH)
-                            .expect(200)
-                            .end((err, res) => {
-                                if (err) {
-                                    done(err);
-                                    return;
-                                }
-                                expect(routeErrorStub.callCount).to.equal(0);
-                                expect(res.body).to.deep.equal(SUCCESS_RESPONSE);
-                                done();
+            createHeadVehicleLocationsEndpoint: {
+                method: "GET",
+                noId: true,
+                obj: GeoEndpoints,
+                path: "/geo/vehicles",
+            },
+            createStopLocationsEndpoint: {
+                method: "GET",
+                noId: true,
+                obj: StopEndpoints,
+                path: "/geo/stops",
+            },
+            createStopPointLocationsEndpoint: {
+                method: "GET",
+                noId: true,
+                obj: StopPointEndpoints,
+                path: "/geo/stopPoints",
+            },
+            createGetVehicleLocationsEndpoint: {
+                method: "GET",
+                obj: GeoEndpoints,
+                path: "/geo/vehicle/:id",
+            },
+            createHeadVehicleLocationEndpoint: {
+                method: "GET",
+                obj: GeoEndpoints,
+                path: "/geo/vehicle/:id",
+            },
+        };
+        Object.keys(testElements)
+            .forEach((methodName: AnyEndpointMethod) => {
+                const testElement: ITestElement = testElements[methodName];
+                describe(testElement.path, () => {
+                    let stub: sinon.SinonStub;
+                    before(() => {
+                        stub = sinon.stub(testElement.obj, methodName);
+                        stub.callsFake(() =>
+                            (req, res, next) => {
+                                res.json(SUCCESS_RESPONSE);
                             });
                     });
-                });
-                if (!testElement.noId) {
-                    invalidTestIds.forEach((testId: string) => {
-                        it('should not pass for id "' + testId + '"', (done) => {
-                            supertest(app)
-                                .get(testElement.path.replace(":id", testId))
+                    afterEach(() => {
+                        stub.resetHistory();
+                    });
+                    after(() => {
+                        stub.restore();
+                    });
+                    validTestIds.forEach((testId: string) => {
+                        it('should pass for id "' + testId + '"', (done) => {
+                            const queryPath: string = testElement.path.replace(":id", testId);
+                            (testElement.method === "HEAD" ?
+                                supertest(app).get(queryPath) :
+                                supertest(app).head(queryPath))
                                 .expect("Content-Type", /json/)
-                                .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
-                                .expect(404)
+                                .expect("Content-Length", SUCCESS_RESPONSE_LENGTH)
+                                .expect(200)
                                 .end((err, res) => {
                                     if (err) {
                                         done(err);
                                         return;
                                     }
                                     expect(routeErrorStub.callCount).to.equal(0);
-                                    expect(res.body).to.deep.equal(NOT_FOUND_RESPONSE);
+                                    expect(res.body).to.deep.equal(SUCCESS_RESPONSE);
                                     done();
                                 });
                         });
                     });
-                }
+                    if (!testElement.noId) {
+                        invalidTestIds.forEach((testId: string) => {
+                            it('should not pass for id "' + testId + '"', (done) => {
+                                supertest(app)
+                                    .get(testElement.path.replace(":id", testId))
+                                    .expect("Content-Type", /json/)
+                                    .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
+                                    .expect(404)
+                                    .end((err, res) => {
+                                        if (err) {
+                                            done(err);
+                                            return;
+                                        }
+                                        expect(routeErrorStub.callCount).to.equal(0);
+                                        expect(res.body).to.deep.equal(NOT_FOUND_RESPONSE);
+                                        done();
+                                    });
+                            });
+                        });
+                    }
+                });
             });
-        });
     });
 });

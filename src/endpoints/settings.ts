@@ -8,13 +8,12 @@ import * as express from "express";
 
 export class SettingsEndpoints {
     public static createSettingsEndpoint(client: TrapezeApiClient): express.RequestHandler {
-        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+        return async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> =>
             client.getSettings()
                 .then((value: ISettings): void => {
                     res.setHeader("Cache-Control", "public, max-age=86400");
                     res.json(value);
                 })
                 .catch(next);
-        };
     }
 }

@@ -7,7 +7,6 @@ import { expect } from "chai";
 import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
-import * as prom from "../promise-to-response";
 import { ITestEndpoint } from "./common-test.spec";
 import { VehicleEndpoints } from "./vehicle";
 
@@ -20,20 +19,6 @@ const testEndpoints: Array<ITestEndpoint<VehicleEndpoints, TrapezeApiClient>> = 
 describe("endpoints/vehicle.ts", () => {
     describe("VehicleEndpoints", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
-        let promiseStub: sinon.SinonStub;
-        before(() => {
-            promiseStub = sinon.stub(prom, "promiseToResponse");
-            promiseStub.resolves(true);
-        });
-
-        afterEach("test and reset promise stub", () => {
-            expect(promiseStub.callCount).to.equal(1);
-            promiseStub.resetHistory();
-        });
-
-        after(() => {
-            promiseStub.restore();
-        });
         testEndpoints.forEach((testEndpoint: any) => {
             describe(testEndpoint.endpointFn + "(client)", () => {
                 const methodStubResponse: any = {
@@ -47,7 +32,8 @@ describe("endpoints/vehicle.ts", () => {
                     },
                 };
                 const res: any = {
-                    test: "many",
+                    json: sinon.stub(),
+                    setHeader: sinon.stub(),
                 };
                 const next: any = {
                     next: true,
@@ -56,7 +42,7 @@ describe("endpoints/vehicle.ts", () => {
                 let methodStub: sinon.SinonStub;
                 before(() => {
                     methodStub = sinon.stub(apiClient, testEndpoint.innerMethod);
-                    methodStub.returns(methodStubResponse);
+                    methodStub.resolves(methodStubResponse);
                 });
                 afterEach("test and reset stubs", () => {
                     expect(methodStub.callCount).to.equal(1);
@@ -67,21 +53,25 @@ describe("endpoints/vehicle.ts", () => {
                 });
                 it("should pass on the provided parameters", () => {
                     const endpoint: express.RequestHandler = VehicleEndpoints[testEndpoint.endpointFn](apiClient);
-                    endpoint(req, res, next);
-                    expect(methodStub.callCount).to.equal(1);
-                    expect(methodStub.getCall(0).args).to.deep.equal([
-                        req.params.id,
-                    ]);
+                    return endpoint(req, res, next)
+                        .then(() => {
+                            expect(methodStub.callCount).to.equal(1);
+                            expect(methodStub.getCall(0).args).to.deep.equal([
+                                req.params.id,
+                            ]);
+                            expect(res.json.callCount).to.equal(1);
+                            expect(res.setHeader.callCount).to.equal(1);
+                        });
                 });
                 it("should call inner methods correclty", () => {
                     const endpoint: express.RequestHandler = VehicleEndpoints[testEndpoint.endpointFn](apiClient);
-                    endpoint(req, res, next);
-                    expect(promiseStub.callCount).to.equal(1);
-                    expect(promiseStub.getCall(0).args).to.deep.equal([
-                        methodStubResponse,
-                        res,
-                        next,
-                    ]);
+                    return endpoint(req, res, next)
+                        .then(() => {
+                            expect(methodStub.callCount).to.equal(1);
+                            expect(methodStub.getCall(0).args).to.deep.equal([
+                                req.params.id,
+                            ]);
+                        });
                 });
             });
         });

@@ -6,18 +6,20 @@ import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
 import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 import { TripId } from "@donmahallem/trapeze-api-types";
 import * as express from "express";
-import { promiseToResponse } from "../promise-to-response";
 
 export class TripEndpoints {
     public static createTripRouteEndpoint(client: TrapezeApiClient): express.RequestHandler {
-        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getRouteByTripId(req.params.id as TripId), res, next);
-        };
+        return async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> =>
+            client.getRouteByTripId(req.params.id as TripId)
+                .then((value) => {
+                    res.json(value);
+                })
+                .catch(next);
     }
     public static createTripPassagesEndpoint(client: TrapezeApiClient,
                                              vehicleStorage: VehicleStorage): express.RequestHandler {
-        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            const prom: Promise<any> = Promise
+        return async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> =>
+            Promise
                 .all([client.getTripPassages(req.params.id as TripId, req.query.mode),
                 vehicleStorage.getVehicleByTripId(req.params.id as TripId)])
                 .then((result) => {
@@ -25,8 +27,10 @@ export class TripEndpoints {
                     resp.location = result[1];
                     resp.tripId = req.params.id;
                     return resp;
-                });
-            promiseToResponse(prom, res, next);
-        };
+                })
+                .then((data: any) => {
+                    res.json(data);
+                })
+                .catch(next);
     }
 }

@@ -7,7 +7,6 @@ import { expect } from "chai";
 import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
-import * as prom from "../promise-to-response";
 import { ITestEndpoint } from "./common-test.spec";
 import { SettingsEndpoints } from "./settings";
 
@@ -20,20 +19,6 @@ const testEndpoints: Array<ITestEndpoint<SettingsEndpoints, TrapezeApiClient>> =
 describe("endpoints/settings.ts", () => {
     describe("SettingsEndpoints", () => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
-        let promiseStub: sinon.SinonStub;
-        before(() => {
-            promiseStub = sinon.stub(prom, "promiseToResponse");
-            promiseStub.resolves(true);
-        });
-
-        afterEach("test and reset promise stub", () => {
-            expect(promiseStub.callCount).to.equal(1);
-            promiseStub.resetHistory();
-        });
-
-        after(() => {
-            promiseStub.restore();
-        });
         testEndpoints.forEach((testEndpoint: any) => {
             describe(testEndpoint.endpointFn + "(client)", () => {
                 const methodStubResponse: any = {
@@ -47,19 +32,23 @@ describe("endpoints/settings.ts", () => {
                     },
                 };
                 const res: any = {
-                    test: "many",
+                    json: () => { },
                 };
                 const next: any = {
                     next: true,
                     value: "test",
                 };
                 let methodStub: sinon.SinonStub;
+                let jsonStub: sinon.SinonStub;
                 before(() => {
                     methodStub = sinon.stub(apiClient, testEndpoint.innerMethod);
+                    jsonStub = sinon.stub();
+                    res.json = jsonStub;
                     methodStub.returns(methodStubResponse);
                 });
                 afterEach("test and reset stubs", () => {
                     expect(methodStub.callCount).to.equal(1);
+                    jsonStub.resetHistory();
                     methodStub.resetHistory();
                 });
                 after(() => {
@@ -73,13 +62,15 @@ describe("endpoints/settings.ts", () => {
                 });
                 it("should call inner methods correclty", () => {
                     const endpoint: express.RequestHandler = SettingsEndpoints[testEndpoint.endpointFn](apiClient);
-                    endpoint(req, res, next);
-                    expect(promiseStub.callCount).to.equal(1);
-                    expect(promiseStub.getCall(0).args).to.deep.equal([
-                        methodStubResponse,
-                        res,
-                        next,
-                    ]);
+                    endpoint(req, res, next)
+                        .then(() => {
+                            expect(jsonStub.callCount).to.equal(1);
+                            expect(jsonStub.getCall(0).args).to.deep.equal([
+                                methodStubResponse,
+                                res,
+                                next,
+                            ]);
+                        });
                 });
             });
         });
