@@ -198,6 +198,6 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiGroup Settings
      * @apiVersion 1.5.0
      */
-    // route.get("/settings", SettingsEndpoints.createSettingsEndpoint(trapezeApi));
+    route.get("/settings", SettingsEndpoints.createSettingsEndpoint(trapezeApi));
     return route;
 };

@@ -137,11 +137,13 @@ describe("api-routes.ts", () => {
         let createStopRoutesStub: sinon.SinonStub;
         let createVehicleRoutesStub: sinon.SinonStub;
         let createStopPointRoutesStub: sinon.SinonStub;
+        let createSettingsRoutesStub: sinon.SinonStub;
         let createGeoRoutesHandlerStub: sinon.SinonStub;
         let createTripRoutesHandlerStub: sinon.SinonStub;
         let createStopRoutesHandlerStub: sinon.SinonStub;
         let createVehicleRoutesHandlerStub: sinon.SinonStub;
         let createStopPointRoutesHandlerStub: sinon.SinonStub;
+        let createSettingsRoutesHandlerStub: sinon.SinonStub;
         before(() => {
             sandbox = sinon.createSandbox();
             routeErrorStub = sandbox.stub();
@@ -150,21 +152,25 @@ describe("api-routes.ts", () => {
             createStopRoutesHandlerStub = sandbox.stub();
             createVehicleRoutesHandlerStub = sandbox.stub();
             createStopPointRoutesHandlerStub = sandbox.stub();
+            createSettingsRoutesHandlerStub = sandbox.stub();
             createGeoRoutesStub = sandbox.stub(testObj, "createGeoRoutes");
             createTripRoutesStub = sandbox.stub(testObj, "createTripRoutes");
             createStopRoutesStub = sandbox.stub(testObj, "createStopRoutes");
             createVehicleRoutesStub = sandbox.stub(testObj, "createVehicleRoutes");
             createStopPointRoutesStub = sandbox.stub(testObj, "createStopPointRoutes");
+            createSettingsRoutesStub = sandbox.stub(SettingsEndpoints, "createSettingsEndpoint");
             createGeoRoutesHandlerStub.callsFake(createDummySuccessResponse("geo"));
             createTripRoutesHandlerStub.callsFake(createDummySuccessResponse("trip"));
             createStopRoutesHandlerStub.callsFake(createDummySuccessResponse("stop"));
             createVehicleRoutesHandlerStub.callsFake(createDummySuccessResponse("vehicle"));
             createStopPointRoutesHandlerStub.callsFake(createDummySuccessResponse("stopPoint"));
+            createSettingsRoutesHandlerStub.callsFake(createDummySuccessResponse("settings"));
             createGeoRoutesStub.returns(createDummyRouter(createGeoRoutesHandlerStub));
             createTripRoutesStub.returns(createDummyRouter(createTripRoutesHandlerStub));
             createStopRoutesStub.returns(createDummyRouter(createStopRoutesHandlerStub));
             createVehicleRoutesStub.returns(createDummyRouter(createVehicleRoutesHandlerStub));
             createStopPointRoutesStub.returns(createDummyRouter(createStopPointRoutesHandlerStub));
+            createSettingsRoutesStub.returns(createDummyRouter(createSettingsRoutesHandlerStub));
         });
         beforeEach(() => {
             routeErrorStub.callsFake((err, req, res, next) => {
@@ -194,6 +200,7 @@ describe("api-routes.ts", () => {
             expect(createStopRoutesStub.callCount, "stop route should be created once").to.equal(1);
             expect(createVehicleRoutesStub.callCount, "vehicle route should be created once").to.equal(1);
             expect(createStopPointRoutesStub.callCount, "stopPoint route should be created once").to.equal(1);
+            expect(createSettingsRoutesStub.callCount, "settings route should be created once").to.equal(1);
         });
         const pathSuffixes: string[] = ["", "/suffix"];
         const pathPrefixes: Array<{
@@ -203,16 +210,21 @@ describe("api-routes.ts", () => {
             stopPoint?: boolean,
             trip?: boolean,
             vehicle?: boolean,
+            settings?: boolean,
         }> = [{ prefix: "geo", geo: true },
         { prefix: "stop", stop: true },
         { prefix: "trip", trip: true },
         { prefix: "vehicle", vehicle: true },
-        { prefix: "stopPoint", stopPoint: true }];
+        { prefix: "stopPoint", stopPoint: true },
+        { prefix: "settings", settings: true }];
         pathPrefixes.forEach((pathPrefix) => {
             describe(pathPrefix.prefix, () => {
                 pathSuffixes.forEach((pathSuffix) => {
                     const fullPath: string = "/" + pathPrefix.prefix + pathSuffix;
-                    it("should HEAD the " + pathPrefix.prefix + " route handler on path '" + fullPath + "'", () =>
+                    if (pathPrefix.settings && pathSuffix !== "") {
+                        return;
+                    }
+                    it("should GET the " + pathPrefix.prefix + " route handler on path '" + fullPath + "'", () =>
                         supertest(app)
                             .get(fullPath)
                             .expect(200)
@@ -230,25 +242,33 @@ describe("api-routes.ts", () => {
                                     .to.equal(pathPrefix.vehicle ? 1 : 0, "stop routes handler should not be used");
                                 expect(createStopPointRoutesHandlerStub.callCount)
                                     .to.equal(pathPrefix.stopPoint ? 1 : 0, "stop routes handler should not be used");
+                                expect(createSettingsRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.settings ? 1 : 0, "stop routes handler should not be used");
                             }));
-                    it("should GET the " + pathPrefix.prefix + " route handler on path '" + fullPath + "'", () =>
-                        supertest(app)
-                            .head(fullPath)
-                            .expect(200)
-                            .expect("Content-Type", /json/)
-                            .expect("test", "HEAD" + fullPath + "/")
-                            .then((body) => {
-                                expect(createGeoRoutesHandlerStub.callCount)
-                                    .to.equal(pathPrefix.geo ? 1 : 0, "geo routes handler should be used");
-                                expect(createTripRoutesHandlerStub.callCount)
-                                    .to.equal(pathPrefix.trip ? 1 : 0, "trip routes handler should not be used");
-                                expect(createStopRoutesHandlerStub.callCount)
-                                    .to.equal(pathPrefix.stop ? 1 : 0, "stop routes handler should not be used");
-                                expect(createVehicleRoutesHandlerStub.callCount)
-                                    .to.equal(pathPrefix.vehicle ? 1 : 0, "stop routes handler should not be used");
-                                expect(createStopPointRoutesHandlerStub.callCount)
-                                    .to.equal(pathPrefix.stopPoint ? 1 : 0, "stop routes handler should not be used");
-                            }));
+                    if (!pathPrefix.settings) {
+                        it("should HEAD the " + pathPrefix.prefix + " route handler on path '" + fullPath + "'", () =>
+                            supertest(app)
+                                .head(fullPath)
+                                .expect(200)
+                                .expect("Content-Type", /json/)
+                                .expect("test", "HEAD" + fullPath + "/")
+                                .then((body) => {
+                                    expect(createGeoRoutesHandlerStub.callCount)
+                                        .to.equal(pathPrefix.geo ? 1 : 0, "geo routes handler should be used");
+                                    expect(createTripRoutesHandlerStub.callCount)
+                                        .to.equal(pathPrefix.trip ? 1 : 0, "trip routes handler should not be used");
+                                    expect(createStopRoutesHandlerStub.callCount)
+                                        .to.equal(pathPrefix.stop ? 1 : 0, "stop routes handler should not be used");
+                                    expect(createVehicleRoutesHandlerStub.callCount)
+                                        .to.equal(pathPrefix.vehicle ? 1 : 0, "stop routes handler should not be used");
+                                    expect(createStopPointRoutesHandlerStub.callCount)
+                                        .to.equal(pathPrefix.stopPoint ? 1 : 0,
+                                            "stop routes handler should not be used");
+                                    expect(createSettingsRoutesHandlerStub.callCount)
+                                        .to.equal(pathPrefix.settings ? 1 : 0,
+                                            "stop routes handler should not be used");
+                                }));
+                    }
                 });
             });
         });
