@@ -1,7 +1,7 @@
 /*!
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
-
+// tslint:disable:no-unused-expression
 import { expect } from "chai";
 import * as express from "express";
 import "mocha";
@@ -47,14 +47,16 @@ const NOT_FOUND_RESPONSE: any = { error: true, status: 404 };
 const NOT_FOUND_RESPONSE_LENGTH: string = "" + JSON.stringify(NOT_FOUND_RESPONSE).length;
 const SUCCESS_RESPONSE: any = { error: false, status: 200 };
 const SUCCESS_RESPONSE_LENGTH: string = "" + JSON.stringify(SUCCESS_RESPONSE).length;
-const createDummyRouter: (requestHandler: express.RequestHandler) => express.Router = (requestHandler: express.RequestHandler) => {
-    const router: express.Router = express.Router();
-    router.use("*", requestHandler);
-    return router;
-};
+const createDummyRouter: (requestHandler: express.RequestHandler) => express.Router =
+    (requestHandler: express.RequestHandler) => {
+        const router: express.Router = express.Router();
+        router.use("*", requestHandler);
+        return router;
+    };
 const createDummySuccessResponse: (id: string) => express.RequestHandler = (id: string): express.RequestHandler =>
     (req: express.Request, res: express.Response, next: express.NextFunction) => {
         setTimeout(() => {
+            res.setHeader("test", req.method + req.baseUrl + req.path);
             res.json({ data: id });
         }, 50);
     };
@@ -64,12 +66,19 @@ describe("api-routes.ts", () => {
             const testId: string = "any test id";
             it("should call json response", (done) => {
                 const jsonStub: sinon.SinonStub = sinon.stub();
+                const headerStub: sinon.SinonStub = sinon.stub();
                 jsonStub.callsFake((...args) => {
                     expect(args).to.deep.equal([{ data: testId }]);
+                    expect(headerStub.callCount).to.equal(1);
+                    expect(headerStub.getCall(0).args).to.deep.equal(["test", "asdf/foo/bar"]);
                     done();
                 });
                 const reqHandler: express.RequestHandler = createDummySuccessResponse(testId);
-                reqHandler(undefined, { json: jsonStub } as any, undefined);
+                reqHandler({
+                    baseUrl: "/foo",
+                    method: "asdf",
+                    path: "/bar",
+                } as any, { json: jsonStub, setHeader: headerStub } as any, undefined);
             });
         });
         describe("createDummyRoute", () => {
@@ -126,28 +135,39 @@ describe("api-routes.ts", () => {
         let createGeoRoutesStub: sinon.SinonStub;
         let createTripRoutesStub: sinon.SinonStub;
         let createStopRoutesStub: sinon.SinonStub;
+        let createVehicleRoutesStub: sinon.SinonStub;
+        let createStopPointRoutesStub: sinon.SinonStub;
         let createGeoRoutesHandlerStub: sinon.SinonStub;
         let createTripRoutesHandlerStub: sinon.SinonStub;
         let createStopRoutesHandlerStub: sinon.SinonStub;
+        let createVehicleRoutesHandlerStub: sinon.SinonStub;
+        let createStopPointRoutesHandlerStub: sinon.SinonStub;
         before(() => {
             sandbox = sinon.createSandbox();
             routeErrorStub = sandbox.stub();
-            createGeoRoutesStub = sandbox.stub(testObj, "createGeoRoutes");
-            createTripRoutesStub = sandbox.stub(testObj, "createTripRoutes");
-            createStopRoutesStub = sandbox.stub(testObj, "createStopRoutes");
             createGeoRoutesHandlerStub = sandbox.stub();
             createTripRoutesHandlerStub = sandbox.stub();
             createStopRoutesHandlerStub = sandbox.stub();
-        });
-        beforeEach(() => {
+            createVehicleRoutesHandlerStub = sandbox.stub();
+            createStopPointRoutesHandlerStub = sandbox.stub();
+            createGeoRoutesStub = sandbox.stub(testObj, "createGeoRoutes");
+            createTripRoutesStub = sandbox.stub(testObj, "createTripRoutes");
+            createStopRoutesStub = sandbox.stub(testObj, "createStopRoutes");
+            createVehicleRoutesStub = sandbox.stub(testObj, "createVehicleRoutes");
+            createStopPointRoutesStub = sandbox.stub(testObj, "createStopPointRoutes");
             createGeoRoutesHandlerStub.callsFake(createDummySuccessResponse("geo"));
             createTripRoutesHandlerStub.callsFake(createDummySuccessResponse("trip"));
             createStopRoutesHandlerStub.callsFake(createDummySuccessResponse("stop"));
+            createVehicleRoutesHandlerStub.callsFake(createDummySuccessResponse("vehicle"));
+            createStopPointRoutesHandlerStub.callsFake(createDummySuccessResponse("stopPoint"));
             createGeoRoutesStub.returns(createDummyRouter(createGeoRoutesHandlerStub));
             createTripRoutesStub.returns(createDummyRouter(createTripRoutesHandlerStub));
             createStopRoutesStub.returns(createDummyRouter(createStopRoutesHandlerStub));
+            createVehicleRoutesStub.returns(createDummyRouter(createVehicleRoutesHandlerStub));
+            createStopPointRoutesStub.returns(createDummyRouter(createStopPointRoutesHandlerStub));
+        });
+        beforeEach(() => {
             routeErrorStub.callsFake((err, req, res, next) => {
-                console.log("KK", err);
                 res.status(501).json(NOT_FOUND_RESPONSE);
             });
             const router: express.Router = testObj.createTrapezeApiRoute("https://localhost:54321/");
@@ -163,43 +183,74 @@ describe("api-routes.ts", () => {
             });
         });
         afterEach(() => {
+            sandbox.resetHistory();
+        });
+        after(() => {
+            sandbox.restore();
+        });
+        it("should init the router correctly", () => {
             expect(createGeoRoutesStub.callCount, "geo route should be created once").to.equal(1);
             expect(createTripRoutesStub.callCount, "trip route should be created once").to.equal(1);
             expect(createStopRoutesStub.callCount, "stop route should be created once").to.equal(1);
-            sandbox.reset();
+            expect(createVehicleRoutesStub.callCount, "vehicle route should be created once").to.equal(1);
+            expect(createStopPointRoutesStub.callCount, "stopPoint route should be created once").to.equal(1);
         });
-        afterEach(() => {
-            sandbox.restore();
-        });
-        describe("/geo", () => {
-            it("should only call the geo route handler", () =>
-                supertest(app)
-                    .get("/geo")
-                    .expect(200)
-                    .expect("Content-Type", /json/)
-                    .expect({ data: "geo" })
-                    .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
-                    .then((body) => {
-                        console.log("yet");
-                        expect(createGeoRoutesStub.callCount).to.equal(1);
-                        expect(createTripRoutesStub.callCount).to.equal(0);
-                        expect(createStopRoutesStub.callCount).to.equal(0);
-                    }));
-        });
-        describe("/stop", () => {
-            it("should only call the stop route handler", () =>
-                supertest(app)
-                    .get("/stop")
-                    .expect(200)
-                    .expect("Content-Type", /json/)
-                    .expect({ data: "geo" })
-                    .expect("Content-Length", NOT_FOUND_RESPONSE_LENGTH)
-                    .then((body) => {
-                        console.log("yet");
-                        expect(createGeoRoutesStub.callCount).to.equal(0);
-                        expect(createTripRoutesStub.callCount).to.equal(0);
-                        expect(createStopRoutesStub.callCount).to.equal(1);
-                    }));
+        const pathSuffixes: string[] = ["", "/suffix"];
+        const pathPrefixes: Array<{
+            prefix: string,
+            geo?: boolean,
+            stop?: boolean,
+            stopPoint?: boolean,
+            trip?: boolean,
+            vehicle?: boolean,
+        }> = [{ prefix: "geo", geo: true },
+        { prefix: "stop", stop: true },
+        { prefix: "trip", trip: true },
+        { prefix: "vehicle", vehicle: true },
+        { prefix: "stopPoint", stopPoint: true }];
+        pathPrefixes.forEach((pathPrefix) => {
+            describe(pathPrefix.prefix, () => {
+                pathSuffixes.forEach((pathSuffix) => {
+                    const fullPath: string = "/" + pathPrefix.prefix + pathSuffix;
+                    it("should HEAD the " + pathPrefix.prefix + " route handler on path '" + fullPath + "'", () =>
+                        supertest(app)
+                            .get(fullPath)
+                            .expect(200)
+                            .expect("Content-Type", /json/)
+                            .expect("test", "GET" + fullPath + "/")
+                            .expect({ data: pathPrefix.prefix })
+                            .then((body) => {
+                                expect(createGeoRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.geo ? 1 : 0, "geo routes handler should be used");
+                                expect(createTripRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.trip ? 1 : 0, "trip routes handler should not be used");
+                                expect(createStopRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.stop ? 1 : 0, "stop routes handler should not be used");
+                                expect(createVehicleRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.vehicle ? 1 : 0, "stop routes handler should not be used");
+                                expect(createStopPointRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.stopPoint ? 1 : 0, "stop routes handler should not be used");
+                            }));
+                    it("should GET the " + pathPrefix.prefix + " route handler on path '" + fullPath + "'", () =>
+                        supertest(app)
+                            .head(fullPath)
+                            .expect(200)
+                            .expect("Content-Type", /json/)
+                            .expect("test", "HEAD" + fullPath + "/")
+                            .then((body) => {
+                                expect(createGeoRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.geo ? 1 : 0, "geo routes handler should be used");
+                                expect(createTripRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.trip ? 1 : 0, "trip routes handler should not be used");
+                                expect(createStopRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.stop ? 1 : 0, "stop routes handler should not be used");
+                                expect(createVehicleRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.vehicle ? 1 : 0, "stop routes handler should not be used");
+                                expect(createStopPointRoutesHandlerStub.callCount)
+                                    .to.equal(pathPrefix.stopPoint ? 1 : 0, "stop routes handler should not be used");
+                            }));
+                });
+            });
         });
     });
 });

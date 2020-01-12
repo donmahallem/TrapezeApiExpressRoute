@@ -144,6 +144,36 @@ export const createStopRoutes: (apiClient: TrapezeApiClient, vehicleStorage: Veh
         return route;
     };
 
+export const createVehicleRoutes: (apiClient: TrapezeApiClient) => express.Router =
+    (apiClient: TrapezeApiClient): express.Router => {
+        const route: express.Router = express.Router();
+        /**
+         * @api {get} /vehicle/:id/route Request Vehicle Route
+         * @apiName GetVehicleRoute
+         * @apiGroup Vehicle
+         *
+         * @apiParam {String} id Vehicle id
+         * @apiVersion 1.5.0
+         */
+        route.get("/:id([a-z0-9A-Z\-\+]+)/route", VehicleEndpoints.createVehicleInfoEndpoint(apiClient));
+        return route;
+    };
+
+export const createStopPointRoutes: (apiClient: TrapezeApiClient) => express.Router =
+    (apiClient: TrapezeApiClient): express.Router => {
+        const route: express.Router = express.Router();
+        /**
+         * @api {get} /stopPoint/:id/info Request stop point info
+         * @apiName StopPointInfo
+         * @apiGroup StopPoint
+         *
+         * @apiParam {String} id Stop Point ID
+         * @apiVersion 1.5.0
+         */
+        route.get("/:id([a-z0-9A-Z\-\+]+)/info", StopPointEndpoints.createStopPointInfoEndpoint(apiClient));
+        return route;
+    };
+
 /**
  *
  * @param endpoint example: http://test.domain/
@@ -156,25 +186,9 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
     route.use("/geo", createGeoRoutes(trapezeApi, str));
     route.use("/trip", createTripRoutes(trapezeApi, str));
     route.use("/stop", createStopRoutes(trapezeApi, str));
+    route.use("/vehicle", createVehicleRoutes(trapezeApi));
+    route.use("/stopPoint", createStopPointRoutes(trapezeApi));
 
-    /**
-     * @api {get} /vehicle/:id/route Request Vehicle Route
-     * @apiName GetVehicleRoute
-     * @apiGroup Vehicle
-     *
-     * @apiParam {String} id Vehicle id
-     * @apiVersion 1.5.0
-     */
-    // route.get("/vehicle/:id([a-z0-9A-Z\-\+]+)/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
-    /**
-     * @api {get} /stopPoint/:id/info Request stop point info
-     * @apiName StopPointInfo
-     * @apiGroup StopPoint
-     *
-     * @apiParam {String} id Stop Point ID
-     * @apiVersion 1.5.0
-     */
-    // route.get("/stopPoint/:id([a-z0-9A-Z\-\+]+)/info", StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
     /**
      * @since 1.5.0
      */
