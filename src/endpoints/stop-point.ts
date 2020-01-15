@@ -4,12 +4,14 @@
 
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
 import * as express from "express";
-import { promiseToResponse } from "../promise-to-response";
 
 export class StopPointEndpoints {
     public static createStopPointInfoEndpoint(client: TrapezeApiClient): express.RequestHandler {
-        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getStopPointInfo(req.params.id), res, next);
-        };
+        return async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> =>
+            client.getStopPointInfo(req.params.id)
+                .then((value) => {
+                    res.setHeader("Cache-Control", "public, max-age=60");
+                    res.json(value);
+                }).catch(next);
     }
 }

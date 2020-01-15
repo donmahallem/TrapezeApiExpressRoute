@@ -7,82 +7,80 @@ import { expect } from "chai";
 import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
-import * as prom from "../promise-to-response";
 import { ITestEndpoint } from "./common-test.spec";
 import { StopPointEndpoints } from "./stop-point";
 
-const testEndpoints: Array<ITestEndpoint<StopPointEndpoints, TrapezeApiClient>> = [
-    {
-        endpointFn: "createStopPointInfoEndpoint",
-        innerMethod: "getStopPointInfo",
-    },
-];
 describe("endpoints/stop-point.ts", () => {
     describe("StopPointEndpoints", () => {
-        const apiClient: TrapezeApiClient = new TrapezeApiClient("https://test.url/");
-        let promiseStub: sinon.SinonStub;
+        const methodStubResponse: any = {
+            method: true,
+            response: "test",
+            stub: 29,
+        };
+        const req: any = {
+            params: {
+                id: 95482,
+            },
+        };
+        let stubInstance: sinon.SinonStubbedInstance<TrapezeApiClient>;
+        let sandbox: sinon.SinonSandbox;
+        let responseObj: any;
+        let nextObj: sinon.SinonStub;
+        let setHeaderStub: sinon.SinonStub;
+        let jsonStub: sinon.SinonStub;
+        let testRequestHandler: express.RequestHandler;
         before(() => {
-            promiseStub = sinon.stub(prom, "promiseToResponse");
-            promiseStub.resolves(true);
+            sandbox = sinon.createSandbox();
+            stubInstance = sandbox.createStubInstance(TrapezeApiClient);
+            nextObj = sandbox.stub();
+            setHeaderStub = sandbox.stub();
+            jsonStub = sandbox.stub();
+            responseObj = {
+                json: jsonStub,
+                setHeader: setHeaderStub,
+            };
         });
-
-        afterEach("test and reset promise stub", () => {
-            expect(promiseStub.callCount).to.equal(1);
-            promiseStub.resetHistory();
+        afterEach("test and reset stubs", () => {
+            sandbox.reset();
         });
-
         after(() => {
-            promiseStub.restore();
+            sandbox.restore();
         });
-        testEndpoints.forEach((testEndpoint: any) => {
-            describe(testEndpoint.endpointFn + "(client)", () => {
-                const methodStubResponse: any = {
-                    method: true,
-                    response: "test",
-                    stub: 29,
-                };
-                const req: any = {
-                    params: {
-                        id: 95482,
-                    },
-                };
-                const res: any = {
-                    test: "many",
-                };
-                const next: any = {
-                    next: true,
-                    value: "test",
-                };
-                let methodStub: sinon.SinonStub;
-                before(() => {
-                    methodStub = sinon.stub(apiClient, testEndpoint.innerMethod);
-                    methodStub.returns(methodStubResponse);
-                });
-                afterEach("test and reset stubs", () => {
-                    expect(methodStub.callCount).to.equal(1);
-                    methodStub.resetHistory();
-                });
-                after(() => {
-                    methodStub.restore();
-                });
-                it("should pass on the provided parameters", () => {
-                    const endpoint: express.RequestHandler = StopPointEndpoints[testEndpoint.endpointFn](apiClient);
-                    endpoint(req, res, next);
-                    expect(methodStub.callCount).to.equal(1);
-                    expect(methodStub.getCall(0).args).to.deep.equal([
-                        req.params.id,
-                    ]);
-                });
-                it("should call inner methods correclty", () => {
-                    const endpoint: express.RequestHandler = StopPointEndpoints[testEndpoint.endpointFn](apiClient);
-                    endpoint(req, res, next);
-                    expect(promiseStub.callCount).to.equal(1);
-                    expect(promiseStub.getCall(0).args).to.deep.equal([
-                        methodStubResponse,
-                        res,
-                        next,
-                    ]);
-                });
+        describe("createStopInfoEndpoint(client)", () => {
+            beforeEach(() => {
+                testRequestHandler = StopPointEndpoints.createStopPointInfoEndpoint(stubInstance as any);
+            });
+            afterEach("test and reset stubs", () => {
+                expect(stubInstance.getStopPointInfo.callCount).to.equal(1);
+            });
+            it("should pass on the provided parameters", () => {
+                stubInstance.getStopPointInfo.resolves(methodStubResponse);
+                return testRequestHandler(req, responseObj, nextObj)
+                    .then(() => {
+                        expect(stubInstance.getStopPointInfo.callCount).to.equal(1);
+                        expect(stubInstance.getStopPointInfo.getCall(0).args).to.deep.equal([
+                            req.params.id,
+                        ]);
+                        expect(jsonStub.callCount).to.equal(1);
+                        expect(jsonStub.getCall(0).args)
+                            .to.deep.equal([methodStubResponse]);
+                        expect(setHeaderStub.callCount).to.equal(1);
+                        expect(setHeaderStub.getCall(0).args).to.deep
+                            .equal(["Cache-Control", "public, max-age=60"]);
+                    });
+            });
+            it("should fail correctly inner methods correclty", () => {
+                stubInstance.getStopPointInfo.rejects(methodStubResponse);
+                return testRequestHandler(req, responseObj, nextObj)
+                    .then(() => {
+                        expect(stubInstance.getStopPointInfo.callCount).to.equal(1);
+                        expect(stubInstance.getStopPointInfo.getCall(0).args).to.deep.equal([
+                            req.params.id,
+                        ]);
+                        expect(jsonStub.callCount).to.equal(0);
+                        expect(setHeaderStub.callCount).to.equal(0);
+                        expect(nextObj.calledOnceWithExactly(methodStubResponse)).to.equal(true);
+                    });
             });
         });
     });

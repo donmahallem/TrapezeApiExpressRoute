@@ -2,10 +2,20 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
+import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
+import {
+    ISuccessStatus,
+    TimestampedVehiclelocation,
+    VehicleStorage,
+} from "@donmahallem/trapeze-api-client-cache";
+import {
+    IStopLocations,
+    IStopPointLocations,
+    IVehicleLocationList,
+    VehicleId,
+} from "@donmahallem/trapeze-api-types";
 import * as express from "express";
 import * as jsonschema from "jsonschema";
-import { promiseToResponse } from "../promise-to-response";
 
 const numberPattern: jsonschema.Schema = {
     oneOf: [
@@ -27,15 +37,50 @@ export const geoFenceSchema: jsonschema.Schema = {
     required: ["top", "bottom", "right", "left"],
     type: "object",
 };
+export const hasFenceQueryParameter: (req: express.Request) => boolean = (req: express.Request): boolean => {
+    if (req && req.query) {
+        return req.query.left || req.query.bottom || req.query.right || req.query.top;
+    }
+    return false;
+};
 
 export class GeoEndpoints {
-    public static createStationLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
+    private constructor() {
+
+    }
+    public static createStopLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getStationLocations(), res, next);
+            (hasFenceQueryParameter(req) ?
+                client.getStopLocations() :
+                client.getStopLocations(req.query.left,
+                    req.query.right,
+                    req.query.top,
+                    req.query.bottom))
+                .then((value: IStopLocations): void => {
+                    res.setHeader("Cache-Control", "public, max-age=86400");
+                    res.json(value);
+                })
+                .catch(next);
         };
     }
-    public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-                                                 vehicleStorage: VehicleStorage): express.RequestHandler {
+
+    public static createStopPointLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
+        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+            (hasFenceQueryParameter(req) ?
+                client.getStopPointLocations() :
+                client.getStopPointLocations(req.query.left,
+                    req.query.right,
+                    req.query.top,
+                    req.query.bottom))
+                .then((value: IStopPointLocations): void => {
+                    res.setHeader("Cache-Control", "public, max-age=86400");
+                    res.json(value);
+                })
+                .catch(next);
+        };
+    }
+
+    public static createQueryParameterMiddleware(): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
             if (req.query && (req.query.top || req.query.bottom || req.query.right || req.query.left)) {
                 const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, geoFenceSchema);
@@ -48,22 +93,68 @@ export class GeoEndpoints {
                         next(new Error("bottom must be smaller than top"));
                         return;
                     }
-                    promiseToResponse(vehicleStorage.getVehicles(req.query.left,
-                        req.query.right,
-                        req.query.top,
-                        req.query.bottom), res, next);
                 } else {
                     next(new Error("Invalid number or type of query parameters"));
                 }
+            }
+            next();
+        };
+    }
+
+    public static createHeadVehicleLocationsEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
+        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+            vehicleStorage.fetchSuccessOrThrow()
+                .then((val: ISuccessStatus): void => {
+                    res.setHeader("ETag", "t" + val.lastUpdate);
+                    res.end();
+                })
+                .catch(next);
+        };
+    }
+
+    public static createGetVehicleLocationsEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
+        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+            if (req.query && (req.query.top && req.query.bottom && req.query.right && req.query.left)) {
+                vehicleStorage.getVehicles(req.query.left,
+                    req.query.right,
+                    req.query.top,
+                    req.query.bottom)
+                    .then((value: IVehicleLocationList) => {
+                        res.setHeader("ETag", "t" + value.lastUpdate);
+                        res.json(value);
+                    })
+                    .catch(next);
+
             } else {
-                promiseToResponse(client.getVehicleLocations(), res, next);
+                vehicleStorage.getAllVehicles()
+                    .then((value: IVehicleLocationList) => {
+                        res.setHeader("ETag", "t" + value.lastUpdate);
+                        res.json(value);
+                    })
+                    .catch(next);
             }
         };
     }
 
-    public static createVehicleLocationEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
+    public static createGetVehicleLocationEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(vehicleStorage.getVehicle(req.params.id), res, next);
+            vehicleStorage.getVehicle(req.params.id as VehicleId)
+                .then((value: TimestampedVehiclelocation): void => {
+                    res.setHeader("ETag", "t" + value.lastUpdate);
+                    res.json(value);
+                })
+                .catch(next);
+        };
+    }
+
+    public static createHeadVehicleLocationEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
+        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
+            vehicleStorage.getVehicle(req.params.id as VehicleId)
+                .then((value: TimestampedVehiclelocation): void => {
+                    res.setHeader("ETag", "t" + value.lastUpdate);
+                    res.end();
+                })
+                .catch(next);
         };
     }
 }
