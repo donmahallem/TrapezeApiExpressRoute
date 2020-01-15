@@ -3,13 +3,13 @@
  */
 
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
+import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 import { expect } from "chai";
 import * as express from "express";
 import "mocha";
 import * as sinon from "sinon";
 import { ITestEndpoint } from "./common-test.spec";
 import { TripEndpoints } from "./trip";
-import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
 
 describe("endpoints/trip.ts", () => {
     describe("TripEndpoints", () => {
@@ -137,11 +137,11 @@ describe("endpoints/trip.ts", () => {
                             expect(stubInstance.getTripPassages.callCount).to.equal(1);
                             expect(stubInstance.getTripPassages.getCall(0).args).to.deep.equal([
                                 req.params.id,
-                                "departure"
+                                "departure",
                             ]);
                             expect(stubStorage.getVehicleByTripId.callCount).to.equal(1);
                             expect(stubStorage.getVehicleByTripId.getCall(0).args).to.deep.equal([
-                                req.params.id
+                                req.params.id,
                             ]);
                             expect(jsonStub.callCount).to.equal(0);
                             expect(setHeaderStub.callCount).to.equal(0);
@@ -156,11 +156,11 @@ describe("endpoints/trip.ts", () => {
                             expect(stubInstance.getTripPassages.callCount).to.equal(1);
                             expect(stubInstance.getTripPassages.getCall(0).args).to.deep.equal([
                                 req.params.id,
-                                "departure"
+                                "departure",
                             ]);
                             expect(stubStorage.getVehicleByTripId.callCount).to.equal(1);
                             expect(stubStorage.getVehicleByTripId.getCall(0).args).to.deep.equal([
-                                req.params.id
+                                req.params.id,
                             ]);
                             expect(jsonStub.callCount).to.equal(0);
                             expect(setHeaderStub.callCount).to.equal(0);
@@ -176,24 +176,24 @@ describe("endpoints/trip.ts", () => {
                         expect(stubInstance.getTripPassages.callCount).to.equal(1);
                         expect(stubInstance.getTripPassages.getCall(0).args).to.deep.equal([
                             req.params.id,
-                            "departure"
+                            "departure",
                         ]);
                         expect(stubStorage.getVehicleByTripId.callCount).to.equal(1);
                         expect(stubStorage.getVehicleByTripId.getCall(0).args).to.deep.equal([
-                            req.params.id
+                            req.params.id,
                         ]);
                         expect(jsonStub.callCount).to.equal(1);
                         expect(jsonStub.getCall(0).args)
                             .to.deep.equal([{
-                                "location": {
-                                    "method": false,
-                                    "response": "test",
-                                    "stub": -24,
+                                location: {
+                                    method: false,
+                                    response: "test",
+                                    stub: -24,
                                 },
-                                "method": true,
-                                "response": "test",
-                                "stub": 29,
-                                "tripId": 95482
+                                method: true,
+                                response: "test",
+                                stub: 29,
+                                tripId: 95482,
                             }]);
                         expect(setHeaderStub.callCount).to.equal(0);
                     });
@@ -203,31 +203,31 @@ describe("endpoints/trip.ts", () => {
                 stubStorage.getVehicleByTripId.resolves(methodStubResponse2);
                 return testRequestHandler(Object.assign({
                     query: {
-                        mode: "arrival"
-                    }
+                        mode: "arrival",
+                    },
                 }, req), responseObj, nextObj)
                     .then(() => {
                         expect(stubInstance.getTripPassages.callCount).to.equal(1);
                         expect(stubInstance.getTripPassages.getCall(0).args).to.deep.equal([
                             req.params.id,
-                            "arrival"
+                            "arrival",
                         ]);
                         expect(stubStorage.getVehicleByTripId.callCount).to.equal(1);
                         expect(stubStorage.getVehicleByTripId.getCall(0).args).to.deep.equal([
-                            req.params.id
+                            req.params.id,
                         ]);
                         expect(jsonStub.callCount).to.equal(1);
                         expect(jsonStub.getCall(0).args)
                             .to.deep.equal([{
-                                "location": {
-                                    "method": false,
-                                    "response": "test",
-                                    "stub": -24,
+                                location: {
+                                    method: false,
+                                    response: "test",
+                                    stub: -24,
                                 },
-                                "method": true,
-                                "response": "test",
-                                "stub": 29,
-                                "tripId": 95482
+                                method: true,
+                                response: "test",
+                                stub: 29,
+                                tripId: 95482,
                             }]);
                         expect(setHeaderStub.callCount).to.equal(0);
                     });
@@ -237,31 +237,31 @@ describe("endpoints/trip.ts", () => {
                 stubStorage.getVehicleByTripId.resolves(methodStubResponse2);
                 return testRequestHandler(Object.assign({
                     query: {
-                        other: "arrival"
-                    }
+                        other: "arrival",
+                    },
                 }, req), responseObj, nextObj)
                     .then(() => {
                         expect(stubInstance.getTripPassages.callCount).to.equal(1);
                         expect(stubInstance.getTripPassages.getCall(0).args).to.deep.equal([
                             req.params.id,
-                            "departure"
+                            "departure",
                         ]);
                         expect(stubStorage.getVehicleByTripId.callCount).to.equal(1);
                         expect(stubStorage.getVehicleByTripId.getCall(0).args).to.deep.equal([
-                            req.params.id
+                            req.params.id,
                         ]);
                         expect(jsonStub.callCount).to.equal(1);
                         expect(jsonStub.getCall(0).args)
                             .to.deep.equal([{
-                                "location": {
-                                    "method": false,
-                                    "response": "test",
-                                    "stub": -24,
+                                location: {
+                                    method: false,
+                                    response: "test",
+                                    stub: -24,
                                 },
-                                "method": true,
-                                "response": "test",
-                                "stub": 29,
-                                "tripId": 95482
+                                method: true,
+                                response: "test",
+                                stub: 29,
+                                tripId: 95482,
                             }]);
                         expect(setHeaderStub.callCount).to.equal(0);
                     });

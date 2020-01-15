@@ -4,7 +4,7 @@
 
 import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
 import { VehicleStorage } from "@donmahallem/trapeze-api-client-cache";
-import { TripId, ITripPassages } from "@donmahallem/trapeze-api-types";
+import { ITripPassages, TripId } from "@donmahallem/trapeze-api-types";
 import * as express from "express";
 
 export class TripEndpoints {
@@ -17,7 +17,7 @@ export class TripEndpoints {
                 .catch(next);
     }
     public static createTripPassagesEndpoint(client: TrapezeApiClient,
-        vehicleStorage: VehicleStorage): express.RequestHandler {
+                                             vehicleStorage: VehicleStorage): express.RequestHandler {
         return async (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> => {
             const prom1: Promise<ITripPassages> = (req.query && req.query.mode) ?
                 client.getTripPassages(req.params.id as TripId, req.query.mode) :
@@ -34,6 +34,6 @@ export class TripEndpoints {
                     res.json(data);
                 })
                 .catch(next);
-        }
+        };
     }
 }
