@@ -1,77 +1,66 @@
 language: node_js
+os: linux
 node_js:
   - "8"
-  - "9"
   - "10"
   - "stable"
 env:
-  matrix:
+  global:
+  - COVERALLS_PARALLEL=true
+  jobs:
   - TEST_SUITE=lint
   - TEST_SUITE=build
   - TEST_SUITE=unit
   - TEST_SUITE=docs
-  - TEST_SUITE=api-docs
-matrix:
-  exclude:
-    - node_js: "8"
-      env: TEST_SUITE=lint
-    - node_js: "8"
-      env: TEST_SUITE=build
-    - node_js: "8"
-      env: TEST_SUITE=docs
-    - node_js: "8"
-      env: TEST_SUITE=api-docs
-    - node_js: "9"
-      env: TEST_SUITE=lint
-    - node_js: "9"
-      env: TEST_SUITE=build
-    - node_js: "9"
-      env: TEST_SUITE=docs
-    - node_js: "9"
-      env: TEST_SUITE=api-docs
-    - node_js: "10"
-      env: TEST_SUITE=lint
-    - node_js: "10"
-      env: TEST_SUITE=build
-    - node_js: "10"
-      env: TEST_SUITE=docs
-    - node_js: "10"
-      env: TEST_SUITE=api-docs
-cache:
-  directories:
-  - node_modules
-  - "$(npm config get prefix)/node_modules"
+cache: npm
+install:
+  npm ci
 before_script:
-- npm install --no-save @donmahallem/trapeze-api-types
+  npm install --no-save @donmahallem/trapeze-api-types
 script:
 - npm run test:$TEST_SUITE
 after_success:
 - ./coveralls_upload.sh
 jobs:
+  exclude:
+    - node_js: "8"
+      env: TEST_SUITE=lint
+    - node_js: "8"
+      env: TEST_SUITE=docs
+    - node_js: "8"
+      env: TEST_SUITE=build
+    - node_js: "10"
+      env: TEST_SUITE=lint
+    - node_js: "10"
+      env: TEST_SUITE=docs
+    - node_js: "10"
+      env: TEST_SUITE=build
   include:
   - stage: npm release
-    node_js: '10'
+    node_js: 'stable'
     script: npm run build
     if: tag IS present
     deploy:
       provider: npm
-      skip_cleanup: true
+      edge: true
+      cleanup: false
       email: $npm_email
-      api_key: $npm_api_key
+      api_token: $npm_api_key
+      access: public
       on:
         tags: true
         repo: donmahallem/TrapezeApiExpressRoute
   - stage: github pages release
-    node_js: '10'
-    script:
-    - npm run docs
-    - npm run api-docs
+    node_js: 'stable'
+    script: npm run docs
     if: branch = master
     deploy:
       provider: pages
-      skip-cleanup: true
-      local-dir: docs
-      github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-      keep-history: true
+      skip_cleanup: true
+      local_dir: docs
+      token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+      keep_history: true
       on:
         branch: master
+notifications:
+  webhooks: https://coveralls.io/webhook
