@@ -11,7 +11,7 @@ import * as prom from "../promise-to-response";
 import { ITestEndpoint } from "./common-test.spec";
 import { TripEndpoints } from "./trip";
 
-const testEndpoints: Array<ITestEndpoint<TripEndpoints, TrapezeApiClient>> = [
+const testEndpoints: ITestEndpoint<TripEndpoints, TrapezeApiClient>[] = [
     {
         endpointFn: "createTripRouteEndpoint",
         innerMethod: "getRouteByTripId",
