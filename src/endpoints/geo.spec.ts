@@ -30,7 +30,7 @@ describe("endpoints/geo.ts", () => {
             "left",
             "bottom",
         ];
-        const testValues: Array<{ value: any, valid: boolean }> = [
+        const testValues: { value: any, valid: boolean }[] = [
             {
                 valid: false,
                 value: undefined,

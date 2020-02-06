@@ -11,7 +11,7 @@ import * as prom from "../promise-to-response";
 import { ITestEndpoint } from "./common-test.spec";
 import { SettingsEndpoints } from "./settings";
 
-const testEndpoints: Array<ITestEndpoint<SettingsEndpoints, TrapezeApiClient>> = [
+const testEndpoints: ITestEndpoint<SettingsEndpoints, TrapezeApiClient>[] = [
     {
         endpointFn: "createSettingsEndpoint",
         innerMethod: "getSettings",

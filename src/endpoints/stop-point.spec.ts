@@ -11,7 +11,7 @@ import * as prom from "../promise-to-response";
 import { ITestEndpoint } from "./common-test.spec";
 import { StopPointEndpoints } from "./stop-point";
 
-const testEndpoints: Array<ITestEndpoint<StopPointEndpoints, TrapezeApiClient>> = [
+const testEndpoints: ITestEndpoint<StopPointEndpoints, TrapezeApiClient>[] = [
     {
         endpointFn: "createStopPointInfoEndpoint",
         innerMethod: "getStopPointInfo",
