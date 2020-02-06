@@ -15,6 +15,7 @@ env:
 cache: npm
 install:
   npm run ci
+before_script:
   npm install --no-save @donmahallem/trapeze-api-types
 script:
 - npm run test:$TEST_SUITE
