@@ -8,7 +8,7 @@ import 'mocha';
 import * as sinon from 'sinon';
 import * as supertest from 'supertest';
 import { createTrapezeApiRoute } from './api-routes';
-import { GeoEndpoints, StopEndpoints, StopPointEndpoints, TripEndpoints, VehicleEndpoints } from './endpoints';
+import { StopEndpoints, StopPointEndpoints, TripEndpoints, VehicleEndpoints } from './endpoints';
 import { SettingsEndpoints } from './endpoints/settings';
 
 const validTestIds: string[] = [
@@ -29,58 +29,58 @@ interface ITestElement {
     path: string;
     noId?: boolean;
 }
-describe('api-routes.ts', () => {
-    describe('createTrapezeApiRoute()', () => {
+describe('api-routes.ts', (): void => {
+    describe('createTrapezeApiRoute()', (): void => {
         let app: express.Express;
         let routeErrorStub: sinon.SinonStub;
         const NOT_FOUND_RESPONSE: any = { error: true, status: 404 };
         const NOT_FOUND_RESPONSE_LENGTH: string = '' + JSON.stringify(NOT_FOUND_RESPONSE).length;
         const SUCCESS_RESPONSE: any = { error: false, status: 200 };
         const SUCCESS_RESPONSE_LENGTH: string = '' + JSON.stringify(SUCCESS_RESPONSE).length;
-        before(() => {
+        before((): void => {
             routeErrorStub = sinon.stub();
-            routeErrorStub.callsFake((err, req, res, next) => {
+            routeErrorStub.callsFake((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {
                 res.status(501).json(NOT_FOUND_RESPONSE);
             });
         });
-        beforeEach(() => {
-            const route = createTrapezeApiRoute('https://localhost:12345/');
+        beforeEach((): void => {
+            const route: express.Router = createTrapezeApiRoute('https://localhost:12345/');
             app = express();
             app.use(route);
-            app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+            app.use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
                 res.status(404);
                 res.json(NOT_FOUND_RESPONSE);
             });
-            app.use((err, req, res, next) => {
+            app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {
                 routeErrorStub(err, req, res, next);
             });
         });
-        afterEach(() => {
+        afterEach((): void => {
             routeErrorStub.resetHistory();
         });
-        describe('test testing setup', () => {
+        describe('test testing setup', (): void => {
             let stub: sinon.SinonStub;
             const testError: Error = new Error('test error');
-            before(() => {
+            before((): void => {
                 stub = sinon.stub(VehicleEndpoints, 'createVehicleInfoEndpoint');
-                stub.callsFake(() =>
-                    (req, res, next) => {
+                stub.callsFake((): express.RequestHandler =>
+                    (req: express.Request, res: express.Response, next: express.NextFunction): void => {
                         next(testError);
                     });
             });
-            afterEach(() => {
+            afterEach((): void => {
                 stub.resetHistory();
             });
-            after(() => {
+            after((): void => {
                 stub.restore();
             });
-            it('should use the 404 handler', (done: MochaDone) => {
+            it('should use the 404 handler', (done: Mocha.Done): void => {
                 supertest(app)
                     .get('/unknown/route')
                     .expect('Content-Type', /json/)
                     .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
                     .expect(404)
-                    .end((err, res) => {
+                    .end((err: any, res: supertest.Response): void => {
                         if (err) {
                             done(err);
                             return;
@@ -90,13 +90,13 @@ describe('api-routes.ts', () => {
                         done();
                     });
             });
-            it('should use the error handler', (done: MochaDone) => {
+            it('should use the error handler', (done: Mocha.Done): void => {
                 supertest(app)
                     .get('/vehicle/asdf/route')
                     .expect('Content-Type', /json/)
                     .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
                     .expect(501)
-                    .end((err, res) => {
+                    .end((err: any, res: supertest.Response): void => {
                         if (err) {
                             done(err);
                             return;
@@ -140,30 +140,30 @@ describe('api-routes.ts', () => {
                 path: '/settings',
             },
         ];
-        testElements.forEach((testElement: ITestElement) => {
-            describe(testElement.path, () => {
+        testElements.forEach((testElement: ITestElement): void => {
+            describe(testElement.path, (): void => {
                 let stub: sinon.SinonStub;
-                before(() => {
+                before((): void => {
                     stub = sinon.stub(testElement.obj, testElement.fn);
-                    stub.callsFake(() =>
-                        (req, res, next) => {
+                    stub.callsFake((): express.RequestHandler =>
+                        (req: express.Request, res: express.Response, next: express.NextFunction): void => {
                             res.json(SUCCESS_RESPONSE);
                         });
                 });
-                afterEach(() => {
+                afterEach((): void => {
                     stub.resetHistory();
                 });
-                after(() => {
+                after((): void => {
                     stub.restore();
                 });
-                validTestIds.forEach((testId: string) => {
-                    it('should pass for id "' + testId + '"', (done: MochaDone) => {
+                validTestIds.forEach((testId: string): void => {
+                    it('should pass for id "' + testId + '"', (done: Mocha.Done): void => {
                         supertest(app)
                             .get(testElement.path.replace(':id', testId))
                             .expect('Content-Type', /json/)
                             .expect('Content-Length', SUCCESS_RESPONSE_LENGTH)
                             .expect(200)
-                            .end((err, res) => {
+                            .end((err: any, res: supertest.Response): void => {
                                 if (err) {
                                     done(err);
                                     return;
@@ -175,14 +175,14 @@ describe('api-routes.ts', () => {
                     });
                 });
                 if (!testElement.noId) {
-                    invalidTestIds.forEach((testId: string) => {
-                        it('should not pass for id "' + testId + '"', (done: MochaDone) => {
+                    invalidTestIds.forEach((testId: string): void => {
+                        it('should not pass for id "' + testId + '"', (done: Mocha.Done): void => {
                             supertest(app)
                                 .get(testElement.path.replace(':id', testId))
                                 .expect('Content-Type', /json/)
                                 .expect('Content-Length', NOT_FOUND_RESPONSE_LENGTH)
                                 .expect(404)
-                                .end((err, res) => {
+                                .end((err: any, res: supertest.Response): void => {
                                     if (err) {
                                         done(err);
                                         return;

@@ -17,25 +17,25 @@ const testEndpoints: ITestEndpoint<SettingsEndpoints, TrapezeApiClient>[] = [
         innerMethod: 'getSettings',
     },
 ];
-describe('endpoints/settings.ts', () => {
-    describe('SettingsEndpoints', () => {
+describe('endpoints/settings.ts', (): void => {
+    describe('SettingsEndpoints', (): void => {
         const apiClient: TrapezeApiClient = new TrapezeApiClient('https://test.url/');
         let promiseStub: sinon.SinonStub;
-        before(() => {
+        before((): void => {
             promiseStub = sinon.stub(prom, 'promiseToResponse');
             promiseStub.resolves(true);
         });
 
-        afterEach('test and reset promise stub', () => {
+        afterEach('test and reset promise stub', (): void => {
             expect(promiseStub.callCount).to.equal(1);
             promiseStub.resetHistory();
         });
 
-        after(() => {
+        after((): void => {
             promiseStub.restore();
         });
-        testEndpoints.forEach((testEndpoint: any) => {
-            describe(testEndpoint.endpointFn + '(client)', () => {
+        testEndpoints.forEach((testEndpoint: any): void => {
+            describe(testEndpoint.endpointFn + '(client)', (): void => {
                 const methodStubResponse: any = {
                     method: true,
                     response: 'test',
@@ -54,24 +54,24 @@ describe('endpoints/settings.ts', () => {
                     value: 'test',
                 };
                 let methodStub: sinon.SinonStub;
-                before(() => {
+                before((): void => {
                     methodStub = sinon.stub(apiClient, testEndpoint.innerMethod);
                     methodStub.returns(methodStubResponse);
                 });
-                afterEach('test and reset stubs', () => {
+                afterEach('test and reset stubs', (): void => {
                     expect(methodStub.callCount).to.equal(1);
                     methodStub.resetHistory();
                 });
-                after(() => {
+                after((): void => {
                     methodStub.restore();
                 });
-                it('should pass on the provided parameters', () => {
+                it('should pass on the provided parameters', (): void => {
                     const endpoint: express.RequestHandler = SettingsEndpoints[testEndpoint.endpointFn](apiClient);
                     endpoint(req, res, next);
                     expect(methodStub.callCount).to.equal(1);
                     expect(methodStub.getCall(0).args).to.deep.equal([]);
                 });
-                it('should call inner methods correclty', () => {
+                it('should call inner methods correclty', (): void => {
                     const endpoint: express.RequestHandler = SettingsEndpoints[testEndpoint.endpointFn](apiClient);
                     endpoint(req, res, next);
                     expect(promiseStub.callCount).to.equal(1);

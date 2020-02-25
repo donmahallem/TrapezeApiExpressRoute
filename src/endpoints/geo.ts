@@ -2,7 +2,7 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient, PositionType } from '@donmahallem/trapeze-api-client';
+import { PositionType, TrapezeApiClient } from '@donmahallem/trapeze-api-client';
 import * as express from 'express';
 import * as jsonschema from 'jsonschema';
 import { promiseToResponse } from '../promise-to-response';
