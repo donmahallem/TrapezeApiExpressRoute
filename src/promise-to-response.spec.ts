@@ -32,9 +32,9 @@ describe('promise-to-response.ts', (): void => {
             statusStub.resetHistory();
         });
         describe('promise resolves', (): void => {
-            [true, false].forEach((nextProvided) => {
+            [true, false].forEach((nextProvided: boolean): void => {
                 describe('next parameter ' + (nextProvided ? '' : 'not') + ' provided', (): void => {
-                    it('should forward the resolved value to the response', (done: MochaDone) => {
+                    it('should forward the resolved value to the response', (done: Mocha.Done): void => {
                         if (nextProvided) {
                             promiseToResponse(Promise.resolve(testResponse), resObj, nextSpy);
                         } else {
@@ -71,8 +71,8 @@ describe('promise-to-response.ts', (): void => {
                 },
             ];
             describe('next parameter provided', (): void => {
-                testErrors.forEach((testError) => {
-                    it('should forward the error to the next function', (done: MochaDone) => {
+                testErrors.forEach((testError: any): void => {
+                    it('should forward the error to the next function', (done: Mocha.Done): void => {
                         promiseToResponse(Promise.reject(testError.error), resObj, nextSpy);
                         setTimeout((): void => {
                             expect(nextSpy.callCount).to.equal(1);
@@ -85,8 +85,8 @@ describe('promise-to-response.ts', (): void => {
                 });
             });
             describe('next parameter not provided', (): void => {
-                testErrors.forEach((testError) => {
-                    it('should forward the error to the next function', (done: MochaDone) => {
+                testErrors.forEach((testError: any): void => {
+                    it('should forward the error to the next function', (done: Mocha.Done): void => {
                         promiseToResponse(Promise.reject(testError.error), resObj);
                         setTimeout((): void => {
                             expect(nextSpy.callCount).to.equal(0);

@@ -7,18 +7,15 @@ import { RequestPromise } from 'request-promise-native';
 
 /**
  * takes promises and passes them on to an express response
- * @param prom
- * @param res
- * @param next
  */
 export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>,
     res: express.Response,
     next?: express.NextFunction): void => {
     prom
-        .then((value: T) => {
+        .then((value: T): void => {
             res.status(200).json(value);
         })
-        .catch((err: any) => {
+        .catch((err: any): void => {
             if (next) {
                 next(err);
             } else {
