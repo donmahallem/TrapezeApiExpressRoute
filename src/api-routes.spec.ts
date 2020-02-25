@@ -114,11 +114,6 @@ describe("api-routes.ts", () => {
                 path: "/vehicle/:id/route",
             },
             {
-                fn: "createTripPassagesEndpoint",
-                obj: TripEndpoints,
-                path: "/trip/:id/passages",
-            },
-            {
                 fn: "createTripRouteEndpoint",
                 obj: TripEndpoints,
                 path: "/trip/:id/route",
@@ -137,11 +132,6 @@ describe("api-routes.ts", () => {
                 fn: "createStopPointInfoEndpoint",
                 obj: StopPointEndpoints,
                 path: "/stopPoint/:id/info",
-            },
-            {
-                fn: "createVehicleLocationEndpoint",
-                obj: GeoEndpoints,
-                path: "/geo/vehicle/:id",
             },
             {
                 fn: "createSettingsEndpoint",

@@ -20,7 +20,10 @@
         "test:build": "npm run build",
         "test:unit": "npm run test-ci",
         "test:docs": "npm run docs",
-        "test:api-docs": "npm run api-docs"
+        "test:api-docs": "npm run api-docs",
+        "test:ci": "nyc npm run test -- --reporter=spec",
+        "test:coverage": "nyc npm run test",
+        "test:watch": "mocha --watch"
     },
     "dependencies": {
         "@donmahallem/trapeze-api-client": "~4.0.0",
