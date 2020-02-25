@@ -34,7 +34,7 @@ describe('promise-to-response.ts', () => {
         describe('promise resolves', () => {
             [true, false].forEach((nextProvided) => {
                 describe('next parameter ' + (nextProvided ? '' : 'not') + ' provided', () => {
-                    it('should forward the resolved value to the response', (done) => {
+                    it('should forward the resolved value to the response', (done: MochaDone) => {
                         if (nextProvided) {
                             promiseToResponse(Promise.resolve(testResponse), resObj, nextSpy);
                         } else {
@@ -72,7 +72,7 @@ describe('promise-to-response.ts', () => {
             ];
             describe('next parameter provided', () => {
                 testErrors.forEach((testError) => {
-                    it('should forward the error to the next function', (done) => {
+                    it('should forward the error to the next function', (done: MochaDone) => {
                         promiseToResponse(Promise.reject(testError.error), resObj, nextSpy);
                         setTimeout(() => {
                             expect(nextSpy.callCount).to.equal(1);
@@ -86,7 +86,7 @@ describe('promise-to-response.ts', () => {
             });
             describe('next parameter not provided', () => {
                 testErrors.forEach((testError) => {
-                    it('should forward the error to the next function', (done) => {
+                    it('should forward the error to the next function', (done: MochaDone) => {
                         promiseToResponse(Promise.reject(testError.error), resObj);
                         setTimeout(() => {
                             expect(nextSpy.callCount).to.equal(0);

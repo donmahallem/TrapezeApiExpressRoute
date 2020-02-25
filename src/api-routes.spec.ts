@@ -74,7 +74,7 @@ describe('api-routes.ts', () => {
             after(() => {
                 stub.restore();
             });
-            it('should use the 404 handler', (done) => {
+            it('should use the 404 handler', (done: MochaDone) => {
                 supertest(app)
                     .get('/unknown/route')
                     .expect('Content-Type', /json/)
@@ -90,7 +90,7 @@ describe('api-routes.ts', () => {
                         done();
                     });
             });
-            it('should use the error handler', (done) => {
+            it('should use the error handler', (done: MochaDone) => {
                 supertest(app)
                     .get('/vehicle/asdf/route')
                     .expect('Content-Type', /json/)
@@ -157,7 +157,7 @@ describe('api-routes.ts', () => {
                     stub.restore();
                 });
                 validTestIds.forEach((testId: string) => {
-                    it('should pass for id "' + testId + '"', (done) => {
+                    it('should pass for id "' + testId + '"', (done: MochaDone) => {
                         supertest(app)
                             .get(testElement.path.replace(':id', testId))
                             .expect('Content-Type', /json/)
@@ -176,7 +176,7 @@ describe('api-routes.ts', () => {
                 });
                 if (!testElement.noId) {
                     invalidTestIds.forEach((testId: string) => {
-                        it('should not pass for id "' + testId + '"', (done) => {
+                        it('should not pass for id "' + testId + '"', (done: MochaDone) => {
                             supertest(app)
                                 .get(testElement.path.replace(':id', testId))
                                 .expect('Content-Type', /json/)
