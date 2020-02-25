@@ -2,18 +2,18 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient, VehicleStorage } from "@donmahallem/trapeze-api-client";
-import * as express from "express";
-import * as jsonschema from "jsonschema";
-import { promiseToResponse } from "../promise-to-response";
+import { PositionType, TrapezeApiClient } from '@donmahallem/trapeze-api-client';
+import * as express from 'express';
+import * as jsonschema from 'jsonschema';
+import { promiseToResponse } from '../promise-to-response';
 
 const numberPattern: jsonschema.Schema = {
     oneOf: [
         {
-            type: "number",
+            type: 'number',
         }, {
-            pattern: "^[\\+\\-]?\\d+$",
-            type: "string",
+            pattern: '^[\\+\\-]?\\d+$',
+            type: 'string',
         },
     ],
 };
@@ -24,46 +24,48 @@ export const geoFenceSchema: jsonschema.Schema = {
         right: numberPattern,
         top: numberPattern,
     },
-    required: ["top", "bottom", "right", "left"],
-    type: "object",
+    required: ['top', 'bottom', 'right', 'left'],
+    type: 'object',
+};
+
+export const getVehicleLocationSchema: jsonschema.Schema = {
+    additionalProperties: false,
+    properties: {
+        lastUpdate: {
+            description: 'unix timestamp in ms since epoch',
+            minimum: 0,
+        },
+        positionType: {
+            description: 'position type to query',
+            'enum': ['RAW', 'CORRECTED'],
+            'type': 'string',
+        },
+    },
+    type: 'object',
 };
 
 export class GeoEndpoints {
     public static createStationLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getStationLocations(), res, next);
+            promiseToResponse(client.getStopLocations(), res, next);
         };
     }
-    public static createVehicleLocationsEndpoint(client: TrapezeApiClient,
-                                                 vehicleStorage: VehicleStorage): express.RequestHandler {
+    public static createVehicleLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            if (req.query && (req.query.top || req.query.bottom || req.query.right || req.query.left)) {
-                const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, geoFenceSchema);
-                if (result.valid) {
-                    if (req.query.left >= req.query.right) {
-                        next(new Error("left must be smaller than right"));
-                        return;
-                    }
-                    if (req.query.bottom >= req.query.top) {
-                        next(new Error("bottom must be smaller than top"));
-                        return;
-                    }
-                    promiseToResponse(vehicleStorage.getVehicles(req.query.left,
-                        req.query.right,
-                        req.query.top,
-                        req.query.bottom), res, next);
-                } else {
-                    next(new Error("Invalid number or type of query parameters"));
-                }
+            const result: jsonschema.ValidatorResult = jsonschema.validate(req.query, getVehicleLocationSchema);
+            if (result.valid) {
+                const queryParams: {
+                    lastUpdate?: number,
+                    positionType?: PositionType,
+                } = result.instance;
+                promiseToResponse(client.getVehicleLocations(
+                    // tslint:disable-next-line:triple-equals
+                    queryParams.positionType != undefined ? queryParams.positionType : 'RAW',
+                    queryParams.lastUpdate,
+                ), res, next);
             } else {
-                promiseToResponse(client.getVehicleLocations(), res, next);
+                next(new Error('Invalid number or type of query parameters'));
             }
-        };
-    }
-
-    public static createVehicleLocationEndpoint(vehicleStorage: VehicleStorage): express.RequestHandler {
-        return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(vehicleStorage.getVehicle(req.params.id), res, next);
         };
     }
 }
