@@ -2,8 +2,8 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import * as express from "express";
-import { RequestPromise } from "request-promise-native";
+import * as express from 'express';
+import { RequestPromise } from 'request-promise-native';
 
 /**
  * takes promises and passes them on to an express response
@@ -12,8 +12,8 @@ import { RequestPromise } from "request-promise-native";
  * @param next
  */
 export const promiseToResponse = <T>(prom: Promise<T> | RequestPromise<T>,
-                                     res: express.Response,
-                                     next?: express.NextFunction): void => {
+    res: express.Response,
+    next?: express.NextFunction): void => {
     prom
         .then((value: T) => {
             res.status(200).json(value);

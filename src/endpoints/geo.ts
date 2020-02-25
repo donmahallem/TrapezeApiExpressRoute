@@ -2,18 +2,18 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient, PositionType } from "@donmahallem/trapeze-api-client";
-import * as express from "express";
-import * as jsonschema from "jsonschema";
-import { promiseToResponse } from "../promise-to-response";
+import { TrapezeApiClient, PositionType } from '@donmahallem/trapeze-api-client';
+import * as express from 'express';
+import * as jsonschema from 'jsonschema';
+import { promiseToResponse } from '../promise-to-response';
 
 const numberPattern: jsonschema.Schema = {
     oneOf: [
         {
-            type: "number",
+            type: 'number',
         }, {
-            pattern: "^[\\+\\-]?\\d+$",
-            type: "string",
+            pattern: '^[\\+\\-]?\\d+$',
+            type: 'string',
         },
     ],
 };
@@ -24,24 +24,24 @@ export const geoFenceSchema: jsonschema.Schema = {
         right: numberPattern,
         top: numberPattern,
     },
-    required: ["top", "bottom", "right", "left"],
-    type: "object",
+    required: ['top', 'bottom', 'right', 'left'],
+    type: 'object',
 };
 
 export const getVehicleLocationSchema: jsonschema.Schema = {
     additionalProperties: false,
     properties: {
         lastUpdate: {
-            description: "unix timestamp in ms since epoch",
+            description: 'unix timestamp in ms since epoch',
             minimum: 0,
         },
         positionType: {
-            description: "position type to query",
-            "enum": ["RAW", "CORRECTED"],
-            "type": "string",
+            description: 'position type to query',
+            'enum': ['RAW', 'CORRECTED'],
+            'type': 'string',
         },
     },
-    type: "object",
+    type: 'object',
 };
 
 export class GeoEndpoints {
@@ -60,11 +60,11 @@ export class GeoEndpoints {
                 } = result.instance;
                 promiseToResponse(client.getVehicleLocations(
                     // tslint:disable-next-line:triple-equals
-                    queryParams.positionType != undefined ? queryParams.positionType : "RAW",
+                    queryParams.positionType != undefined ? queryParams.positionType : 'RAW',
                     queryParams.lastUpdate,
                 ), res, next);
             } else {
-                next(new Error("Invalid number or type of query parameters"));
+                next(new Error('Invalid number or type of query parameters'));
             }
         };
     }

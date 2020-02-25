@@ -2,16 +2,16 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
-import * as express from "express";
+import { TrapezeApiClient } from '@donmahallem/trapeze-api-client';
+import * as express from 'express';
 import {
     GeoEndpoints,
     StopEndpoints,
     StopPointEndpoints,
     TripEndpoints,
     VehicleEndpoints,
-} from "./endpoints";
-import { SettingsEndpoints } from "./endpoints/settings";
+} from './endpoints';
+import { SettingsEndpoints } from './endpoints/settings';
 
 /**
  *
@@ -35,7 +35,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      *
      * @apiVersion 1.5.0
      */
-    route.get("/geo/stops", GeoEndpoints.createStationLocationsEndpoint(trapezeApi));
+    route.get('/geo/stops', GeoEndpoints.createStationLocationsEndpoint(trapezeApi));
     /**
      * @api {get} /geo/vehicles Request vehicle locations
      * @apiName GetVehicleLocations
@@ -43,7 +43,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      *
      * @apiVersion 1.5.0
      */
-    route.get("/geo/vehicles", GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi));
+    route.get('/geo/vehicles', GeoEndpoints.createVehicleLocationsEndpoint(trapezeApi));
     /**
      * @api {get} /trip/:id/route Request Vehicle Route
      * @apiName GetTripRoute
@@ -52,7 +52,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiParam {String} id Vehicle id
      * @apiVersion 1.5.0
      */
-    route.get("/trip/:id([a-z0-9A-Z\-\+]+)/route", TripEndpoints.createTripRouteEndpoint(trapezeApi));
+    route.get('/trip/:id([a-z0-9A-Z\-\+]+)/route', TripEndpoints.createTripRouteEndpoint(trapezeApi));
     /**
      * @api {get} /vehicle/:id/route Request Vehicle Route
      * @apiName GetVehicleRoute
@@ -61,7 +61,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiParam {String} id Vehicle id
      * @apiVersion 1.5.0
      */
-    route.get("/vehicle/:id([a-z0-9A-Z\-\+]+)/route", VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
+    route.get('/vehicle/:id([a-z0-9A-Z\-\+]+)/route', VehicleEndpoints.createVehicleInfoEndpoint(trapezeApi));
     /**
      * @api {get} /stop/:id/departures Request Stop Departures
      * @apiName GetStopDepartures
@@ -70,7 +70,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiParam {String} id Stop id
      * @apiVersion 1.5.0
      */
-    route.get("/stop/:id([a-z0-9A-Z\-\+]+)/departures", StopEndpoints.createStopDeparturesEndpoint(trapezeApi));
+    route.get('/stop/:id([a-z0-9A-Z\-\+]+)/departures', StopEndpoints.createStopDeparturesEndpoint(trapezeApi));
     /**
      * @api {get} /stop/:id/info Request Stop Info
      * @apiName GetStopInfo
@@ -79,7 +79,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiParam {String} id Stop id
      * @apiVersion 1.5.0
      */
-    route.get("/stop/:id([a-z0-9A-Z\-\+]+)/info", StopEndpoints.createStopInfoEndpoint(trapezeApi));
+    route.get('/stop/:id([a-z0-9A-Z\-\+]+)/info', StopEndpoints.createStopInfoEndpoint(trapezeApi));
     /**
      * @api {get} /stopPoint/:id/info Request stop point info
      * @apiName StopPointInfo
@@ -88,7 +88,7 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiParam {String} id Stop Point ID
      * @apiVersion 1.5.0
      */
-    route.get("/stopPoint/:id([a-z0-9A-Z\-\+]+)/info", StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
+    route.get('/stopPoint/:id([a-z0-9A-Z\-\+]+)/info', StopPointEndpoints.createStopPointInfoEndpoint(trapezeApi));
     /**
      * @since 1.5.0
      */
@@ -98,6 +98,6 @@ export const createTrapezeApiRoute: (endpoint: string) => express.Router = (endp
      * @apiGroup Settings
      * @apiVersion 1.5.0
      */
-    route.get("/settings", SettingsEndpoints.createSettingsEndpoint(trapezeApi));
+    route.get('/settings', SettingsEndpoints.createSettingsEndpoint(trapezeApi));
     return route;
 };

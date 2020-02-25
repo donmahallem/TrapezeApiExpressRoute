@@ -2,10 +2,10 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { TrapezeApiClient } from "@donmahallem/trapeze-api-client";
-import { TripId } from "@donmahallem/trapeze-api-types";
-import * as express from "express";
-import { promiseToResponse } from "../promise-to-response";
+import { TrapezeApiClient } from '@donmahallem/trapeze-api-client';
+import { TripId } from '@donmahallem/trapeze-api-types';
+import * as express from 'express';
+import { promiseToResponse } from '../promise-to-response';
 
 export class TripEndpoints {
     public static createTripRouteEndpoint(client: TrapezeApiClient): express.RequestHandler {
