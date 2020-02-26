@@ -168,5 +168,11 @@
             "check-type"
         ]
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "linterOptions": {
+        "exclude": [
+            "./src/models/protos.js",
+            "./src/models/protos.d.ts"
+        ]
+    }
 }

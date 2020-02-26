@@ -1,0 +1,61 @@
+// awesome.proto
+package awesomepackage;
+syntax = "proto3";
+ 
+
+message VehicleLocation{
+
+    message PathSegment{
+        int64 x1 = 1;
+        int64 x2 = 2;
+        int64 y1 = 3;
+        int64 y2 = 4;
+        uint32 angle = 5;
+        float length = 6;
+    }
+    /**
+     * Check if vehicle is Deleted
+     */
+    bool isDeleted = 1;    
+    /**
+     * Kind of Vehicle
+     */
+    string category = 2;
+
+    string color = 3;
+    /**
+     * Heading of the vehicle in degrees
+     */
+    uint32 heading = 4;
+    /**
+     * Latitude in arcmiliseconds
+     */
+     int64 latitude = 5;
+    /**
+     * Longitude in arcmiliseconds
+     */
+     int64 longitude = 6;
+    /**
+     * Humanreadable vehicle name
+     */
+    string name = 7;
+    /**
+     * Previous Vehicle locations
+     */
+    repeated PathSegment path = 8;
+    /**
+     * Current TripId of the vehicle
+     */
+    string tripId = 9;
+}
+
+message VehicleLocationList{
+    /**
+     * Timestamp
+     */
+     int64 lastUpdate = 1;
+    /**
+     * reported locations
+     */
+    repeated VehicleLocation vehicles = 2;
+}

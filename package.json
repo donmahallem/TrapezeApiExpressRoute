@@ -23,7 +23,8 @@
         "test:api-docs": "npm run api-docs",
         "test:ci": "nyc npm run test -- --reporter=spec",
         "test:coverage": "nyc npm run test",
-        "test:watch": "mocha --watch"
+        "test:watch": "mocha --watch",
+        "proto:create": "pbjs -t static-module -w commonjs --force-number -o ./src/models/protos.js ./proto/test.proto && pbts -o ./src/models/protos.d.ts ./src/models/protos.js"
     },
     "dependencies": {
         "@donmahallem/trapeze-api-client": "~4.0.0",
@@ -44,6 +45,7 @@
         "@types/supertest": "~2.0.8",
         "apidoc": "~0.20.0",
         "chai": "~4.2.0",
+        "jsdoc": "^3.6.3",
         "mocha": "~7.0.1",
         "nodemon": "~2.0.2",
         "nyc": "~15.0.0",

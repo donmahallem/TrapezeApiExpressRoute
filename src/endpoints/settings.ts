@@ -9,7 +9,7 @@ import { promiseToResponse } from '../promise-to-response';
 export class SettingsEndpoints {
     public static createSettingsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getSettings(), res, next);
+            promiseToResponse(client.getSettings(), undefined, res, next);
         };
     }
 }

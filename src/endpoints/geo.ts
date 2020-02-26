@@ -47,7 +47,7 @@ export const getVehicleLocationSchema: jsonschema.Schema = {
 export class GeoEndpoints {
     public static createStationLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
         return (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            promiseToResponse(client.getStopLocations(), res, next);
+            promiseToResponse(client.getStopLocations(), undefined, res, next);
         };
     }
     public static createVehicleLocationsEndpoint(client: TrapezeApiClient): express.RequestHandler {
@@ -62,7 +62,7 @@ export class GeoEndpoints {
                     // tslint:disable-next-line:triple-equals
                     queryParams.positionType != undefined ? queryParams.positionType : 'RAW',
                     queryParams.lastUpdate,
-                ), res, next);
+                ), undefined, res, next);
             } else {
                 next(new Error('Invalid number or type of query parameters'));
             }

@@ -2,6 +2,7 @@
     "mode": "file",
     "out": "./docs/docs",
     "exclude": [
-        "**/*.spec.ts"
+        "**/*.spec.ts",
+        "**/*.d.ts"
     ]
 }
