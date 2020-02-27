@@ -40,7 +40,7 @@ export const promiseToResponse = <T extends object>(prom: Promise<T> | RequestPr
             } else {
                 const code: number = err.statusCode ? err.statusCode : 500;
                 res.status(code).json({
-                    message: "An error occured",
+                    message: 'An error occured',
                     statusCode: code,
                 });
             }

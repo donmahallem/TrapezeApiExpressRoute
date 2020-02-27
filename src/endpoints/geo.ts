@@ -6,6 +6,7 @@ import { PositionType, TrapezeApiClient } from '@donmahallem/trapeze-api-client'
 import * as express from 'express';
 import * as jsonschema from 'jsonschema';
 import { promiseToResponse } from '../promise-to-response';
+import { VehicleLocationListMessage } from '../models';
 
 const numberPattern: jsonschema.Schema = {
     oneOf: [
@@ -62,7 +63,7 @@ export class GeoEndpoints {
                     // tslint:disable-next-line:triple-equals
                     queryParams.positionType != undefined ? queryParams.positionType : 'RAW',
                     queryParams.lastUpdate,
-                ), undefined, res, next);
+                ), VehicleLocationListMessage, res, next);
             } else {
                 next(new Error('Invalid number or type of query parameters'));
             }

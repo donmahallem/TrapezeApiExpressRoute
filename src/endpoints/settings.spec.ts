@@ -7,10 +7,10 @@ import { expect } from 'chai';
 import * as express from 'express';
 import 'mocha';
 import * as sinon from 'sinon';
+import { SettingsMessage } from '../models';
 import * as prom from '../promise-to-response';
 import { ITestEndpoint } from './common-test.spec';
 import { SettingsEndpoints } from './settings';
-import { SettingsMessage } from '../models';
 
 const testEndpoints: ITestEndpoint<SettingsEndpoints, TrapezeApiClient>[] = [
     {

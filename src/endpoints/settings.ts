@@ -3,11 +3,10 @@
  */
 
 import { TrapezeApiClient } from '@donmahallem/trapeze-api-client';
-import * as express from 'express';
-import { promiseToResponse, IMessageType } from '../promise-to-response';
 import { ISettings } from '@donmahallem/trapeze-api-types';
+import * as express from 'express';
 import { SettingsMessage } from '../models';
-
+import { promiseToResponse, IMessageType } from '../promise-to-response';
 
 export class SettingsEndpoints {
     public static createSettingsEndpoint(client: TrapezeApiClient): express.RequestHandler {

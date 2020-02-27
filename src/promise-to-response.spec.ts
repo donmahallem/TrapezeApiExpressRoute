@@ -8,7 +8,6 @@ import 'mocha';
 import { Root } from 'protobufjs';
 import * as supertest from 'supertest';
 import { promiseToResponse, IMessageType } from './promise-to-response';
-import * as sinon from "sinon";
 const testProtoDefinition: any = {
     'nested': {
         'TestMessage': {
@@ -29,10 +28,11 @@ const testMessage: any = testRoot.lookupType('TestMessage');
 const setupTestApp: <T extends object>(prom: Promise<T>, proto: IMessageType<T>, hasNext?: boolean) => express.Application =
     <T extends object>(prom: Promise<T>, proto: IMessageType<T>, hasNext: boolean = true): express.Application => {
         return express().use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
-            if (hasNext)
+            if (hasNext) {
                 promiseToResponse(prom, proto, res, next);
-            else
+            } else {
                 promiseToResponse(prom, proto, res);
+            }
         })
             .use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {
                 res.status(999).json(err);
@@ -96,8 +96,8 @@ describe('promise-to-response.ts', (): void => {
                                 .expect(testRep)
                                 .then((): void => { });
                         });
-                })
-            })
+                });
+            });
             /*
             describe('no next callback is provided', (): void => {
                 testAcceptHeaders.forEach((testAcceptHeader: string): void => {
