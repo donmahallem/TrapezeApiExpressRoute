@@ -2,4 +2,10 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-export * from './protos';
+import { awesomepackage } from "./protos";
+
+const SettingsMessage: typeof awesomepackage.Settings = awesomepackage.Settings;
+export {
+    awesomepackage,
+    SettingsMessage
+}

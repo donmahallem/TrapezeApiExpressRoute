@@ -6,7 +6,7 @@ import * as express from 'express';
 import { Writer } from 'protobufjs';
 import { RequestPromise } from 'request-promise-native';
 
-interface IMessageType<T> {
+export interface IMessageType<T> {
     encode(inp: T): Writer;
 }
 /**
@@ -28,19 +28,19 @@ export const promiseToResponse = <T extends object>(prom: Promise<T> | RequestPr
                         .status(200)
                         .send(protoMessage.encode(value).finish());
                 },
-                'default': () => {
+                'default': (): void => {
                     res.status(400)
                         .json({ status: 400, message: 'Bad Request' });
                 },
             });
-        })
-        .catch((err: any): void => {
-            if (next) {
+        }, (err: any): void => {
+            // tslint:disable-next-line:triple-equals
+            if (next != undefined) {
                 next(err);
             } else {
                 const code: number = err.statusCode ? err.statusCode : 500;
                 res.status(code).json({
-                    error: true,
+                    message: "An error occured",
                     statusCode: code,
                 });
             }

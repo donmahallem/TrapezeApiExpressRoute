@@ -10,6 +10,7 @@ import * as sinon from 'sinon';
 import * as prom from '../promise-to-response';
 import { ITestEndpoint } from './common-test.spec';
 import { SettingsEndpoints } from './settings';
+import { SettingsMessage } from '../models';
 
 const testEndpoints: ITestEndpoint<SettingsEndpoints, TrapezeApiClient>[] = [
     {
@@ -77,6 +78,7 @@ describe('endpoints/settings.ts', (): void => {
                     expect(promiseStub.callCount).to.equal(1);
                     expect(promiseStub.getCall(0).args).to.deep.equal([
                         methodStubResponse,
+                        SettingsMessage,
                         res,
                         next,
                     ]);

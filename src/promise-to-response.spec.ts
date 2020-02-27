@@ -7,7 +7,8 @@ import * as express from 'express';
 import 'mocha';
 import { Root } from 'protobufjs';
 import * as supertest from 'supertest';
-import { promiseToResponse } from './promise-to-response';
+import { promiseToResponse, IMessageType } from './promise-to-response';
+import * as sinon from "sinon";
 const testProtoDefinition: any = {
     'nested': {
         'TestMessage': {
@@ -25,23 +26,32 @@ interface IResponse {
 }
 const testRoot: Root = Root.fromJSON(testProtoDefinition);
 const testMessage: any = testRoot.lookupType('TestMessage');
+const setupTestApp: <T extends object>(prom: Promise<T>, proto: IMessageType<T>, hasNext?: boolean) => express.Application =
+    <T extends object>(prom: Promise<T>, proto: IMessageType<T>, hasNext: boolean = true): express.Application => {
+        return express().use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
+            if (hasNext)
+                promiseToResponse(prom, proto, res, next);
+            else
+                promiseToResponse(prom, proto, res);
+        })
+            .use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): void => {
+                res.status(999).json(err);
+            });
+    };
+
+const createDelayedPromiseRejection: (err: any) => Promise<object> = (err: any): Promise<object> => {
+    return new Promise<object>((resolve: (val: any) => void, reject: (reason?: any) => void): void => {
+        setTimeout((): void => reject(err), 250);
+    });
+};
 describe('promise-to-response.ts', (): void => {
     describe('promiseToResponse(prom,res)', (): void => {
         const testRep: IResponse = { testField: 'any test' };
-        let testApp: express.Application;
-        before((): void => {
-            testApp = express().use((req: express.Request, res: express.Response, next: express.NextFunction): void => {
-                try {
-                    promiseToResponse(Promise.resolve(testRep), testMessage, res, next);
-                } catch (err) {
-                    console.error(err);
-
-                }
-            });
-        });
-        afterEach((): void => {
-        });
         describe('promise resolves', (): void => {
+            let testApp: express.Application;
+            before((): void => {
+                testApp = setupTestApp(Promise.resolve(testRep), testMessage);
+            });
             it('should resolve with the result and return a protobuffer', (): Promise<void> => {
                 return supertest(testApp)
                     .get('/users')
@@ -70,6 +80,64 @@ describe('promise-to-response.ts', (): void => {
                     .expect(400, { status: 400, message: 'Bad Request' })
                     .then((): void => { });
             });
+        });
+        describe('promise rejects', (): void => {
+            const testAcceptHeaders: string[] = ['application/octet-stream', 'application/json', 'text/html'];
+            describe('next callback is provided', (): void => {
+                testAcceptHeaders.forEach((testAcceptHeader: string): void => {
+                    it('should call the next method with the source error and Accept Header set to "' + testAcceptHeader + '"',
+                        (): Promise<void> => {
+                            const testApp: express.Application = setupTestApp(createDelayedPromiseRejection(testRep), testMessage);
+                            return supertest(testApp)
+                                .get('/users')
+                                .set('Accept', 'application/octet-stream')
+                                .expect(999)
+                                .expect('Content-Type', /^application\/json/)
+                                .expect(testRep)
+                                .then((): void => { });
+                        });
+                })
+            })
+            /*
+            describe('no next callback is provided', (): void => {
+                testAcceptHeaders.forEach((testAcceptHeader: string): void => {
+                    it('should return a 500 if no statusCode is attached to the error and Accept Header set to "' + testAcceptHeader + '"',
+                        (): Promise<void> => {
+                            const testApp: express.Application = setupTestApp(Promise.reject(testRep), testMessage, false);
+                            return supertest(testApp)
+                                .get('/users')
+                                .set('Accept', 'application/json')
+                                .expect('Content-Type', /^application\/json/)
+                                .expect(500)
+                                .expect({
+                                    message: "An error occured",
+                                    statusCode: 500,
+                                })
+                                .catch(() => { })
+                                .then((): void => { });
+                        });
+                    it('should return the provided statusCode attached to the error and Accept Header set to "' + testAcceptHeader + '"',
+                        (): Promise<void> => {
+                            const testPromise: Promise<any> = Promise.reject(Object.assign({ statusCode: 529 }, testRep));
+                            const testApp: express.Application = setupTestApp(testPromise, testMessage, false);
+                            return supertest(testApp)
+                                .get('/users')
+                                .set('Accept', 'application/json')
+                                .expect('Content-Type', /^application\/json/)
+                                .expect(529)
+                                .catch((response: supertest.Response): void => {
+                                    expect(response.body).to.deep.equal({
+                                        message: "An error occured",
+                                        statusCode: 529,
+                                    });
+                                })
+                                .catch(() => { })
+                                .then(() => {
+
+                                });
+                        });
+                });
+            });*/
         });
     });
 });

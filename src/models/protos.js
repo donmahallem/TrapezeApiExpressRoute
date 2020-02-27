@@ -1031,6 +1031,811 @@ $root.awesomepackage = (function() {
         return VehicleLocationList;
     })();
 
+    awesomepackage.Settings = (function() {
+
+        /**
+         * Properties of a Settings.
+         * @memberof awesomepackage
+         * @interface ISettings
+         * @property {Array.<string>|null} [AVAILABLE_LANGUAGES] Settings AVAILABLE_LANGUAGES
+         * @property {number|null} [DEFAULT_TIME_PREVIEW] Settings DEFAULT_TIME_PREVIEW
+         * @property {boolean|null} [GEOLOCATION_ENABLED] Settings GEOLOCATION_ENABLED
+         * @property {number|null} [INITIAL_LAT] Settings INITIAL_LAT
+         * @property {number|null} [INITIAL_LON] Settings INITIAL_LON
+         * @property {number|null} [INITIAL_ZOOM] Settings INITIAL_ZOOM
+         * @property {string|null} [LANGUAGE] Settings LANGUAGE
+         * @property {boolean|null} [MAP_ENABLED] Settings MAP_ENABLED
+         * @property {boolean|null} [MAP_SHOW_CONTROLS] Settings MAP_SHOW_CONTROLS
+         * @property {boolean|null} [MAP_SHOW_PATTERNS] Settings MAP_SHOW_PATTERNS
+         * @property {boolean|null} [MAP_SHOW_STOPS] Settings MAP_SHOW_STOPS
+         * @property {boolean|null} [MAP_SHOW_VEHICLES] Settings MAP_SHOW_VEHICLES
+         * @property {number|null} [MAX_ZOOM] Settings MAX_ZOOM
+         * @property {number|null} [MIN_ZOOM] Settings MIN_ZOOM
+         * @property {boolean|null} [MOBILE_ENABLED] Settings MOBILE_ENABLED
+         * @property {boolean|null} [SEARCH_BY_ROUTES_ENABLED] Settings SEARCH_BY_ROUTES_ENABLED
+         * @property {boolean|null} [SEARCH_BY_STOPPOINTS_ENABLED] Settings SEARCH_BY_STOPPOINTS_ENABLED
+         * @property {boolean|null} [SHOW_ABOUT_DEPARTURE_TEXT] Settings SHOW_ABOUT_DEPARTURE_TEXT
+         * @property {boolean|null} [SHOW_ACTUAL_COLUMN] Settings SHOW_ACTUAL_COLUMN
+         * @property {boolean|null} [SHOW_DEPARTING_TEXT] Settings SHOW_DEPARTING_TEXT
+         * @property {boolean|null} [SHOW_DEP_ARR_TEXT] Settings SHOW_DEP_ARR_TEXT
+         * @property {boolean|null} [SHOW_LANGUAGE_BAR] Settings SHOW_LANGUAGE_BAR
+         * @property {boolean|null} [SHOW_MIXED_COLUMN] Settings SHOW_MIXED_COLUMN
+         * @property {boolean|null} [SHOW_PASSAGETYPE_COLUMN] Settings SHOW_PASSAGETYPE_COLUMN
+         * @property {boolean|null} [SHOW_SCHEDULE_COLUMN] Settings SHOW_SCHEDULE_COLUMN
+         * @property {boolean|null} [SUPPRESS_COUNTDOWN_TIME_INCREMENT] Settings SUPPRESS_COUNTDOWN_TIME_INCREMENT
+         * @property {boolean|null} [TIMESLIDER_ENABLED] Settings TIMESLIDER_ENABLED
+         */
+
+        /**
+         * Constructs a new Settings.
+         * @memberof awesomepackage
+         * @classdesc Represents a Settings.
+         * @implements ISettings
+         * @constructor
+         * @param {awesomepackage.ISettings=} [properties] Properties to set
+         */
+        function Settings(properties) {
+            this.AVAILABLE_LANGUAGES = [];
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Settings AVAILABLE_LANGUAGES.
+         * @member {Array.<string>} AVAILABLE_LANGUAGES
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.AVAILABLE_LANGUAGES = $util.emptyArray;
+
+        /**
+         * Settings DEFAULT_TIME_PREVIEW.
+         * @member {number} DEFAULT_TIME_PREVIEW
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.DEFAULT_TIME_PREVIEW = 0;
+
+        /**
+         * Settings GEOLOCATION_ENABLED.
+         * @member {boolean} GEOLOCATION_ENABLED
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.GEOLOCATION_ENABLED = false;
+
+        /**
+         * Settings INITIAL_LAT.
+         * @member {number} INITIAL_LAT
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.INITIAL_LAT = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Settings INITIAL_LON.
+         * @member {number} INITIAL_LON
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.INITIAL_LON = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+        /**
+         * Settings INITIAL_ZOOM.
+         * @member {number} INITIAL_ZOOM
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.INITIAL_ZOOM = 0;
+
+        /**
+         * Settings LANGUAGE.
+         * @member {string} LANGUAGE
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.LANGUAGE = "";
+
+        /**
+         * Settings MAP_ENABLED.
+         * @member {boolean} MAP_ENABLED
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MAP_ENABLED = false;
+
+        /**
+         * Settings MAP_SHOW_CONTROLS.
+         * @member {boolean} MAP_SHOW_CONTROLS
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MAP_SHOW_CONTROLS = false;
+
+        /**
+         * Settings MAP_SHOW_PATTERNS.
+         * @member {boolean} MAP_SHOW_PATTERNS
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MAP_SHOW_PATTERNS = false;
+
+        /**
+         * Settings MAP_SHOW_STOPS.
+         * @member {boolean} MAP_SHOW_STOPS
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MAP_SHOW_STOPS = false;
+
+        /**
+         * Settings MAP_SHOW_VEHICLES.
+         * @member {boolean} MAP_SHOW_VEHICLES
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MAP_SHOW_VEHICLES = false;
+
+        /**
+         * Settings MAX_ZOOM.
+         * @member {number} MAX_ZOOM
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MAX_ZOOM = 0;
+
+        /**
+         * Settings MIN_ZOOM.
+         * @member {number} MIN_ZOOM
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MIN_ZOOM = 0;
+
+        /**
+         * Settings MOBILE_ENABLED.
+         * @member {boolean} MOBILE_ENABLED
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.MOBILE_ENABLED = false;
+
+        /**
+         * Settings SEARCH_BY_ROUTES_ENABLED.
+         * @member {boolean} SEARCH_BY_ROUTES_ENABLED
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SEARCH_BY_ROUTES_ENABLED = false;
+
+        /**
+         * Settings SEARCH_BY_STOPPOINTS_ENABLED.
+         * @member {boolean} SEARCH_BY_STOPPOINTS_ENABLED
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SEARCH_BY_STOPPOINTS_ENABLED = false;
+
+        /**
+         * Settings SHOW_ABOUT_DEPARTURE_TEXT.
+         * @member {boolean} SHOW_ABOUT_DEPARTURE_TEXT
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_ABOUT_DEPARTURE_TEXT = false;
+
+        /**
+         * Settings SHOW_ACTUAL_COLUMN.
+         * @member {boolean} SHOW_ACTUAL_COLUMN
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_ACTUAL_COLUMN = false;
+
+        /**
+         * Settings SHOW_DEPARTING_TEXT.
+         * @member {boolean} SHOW_DEPARTING_TEXT
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_DEPARTING_TEXT = false;
+
+        /**
+         * Settings SHOW_DEP_ARR_TEXT.
+         * @member {boolean} SHOW_DEP_ARR_TEXT
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_DEP_ARR_TEXT = false;
+
+        /**
+         * Settings SHOW_LANGUAGE_BAR.
+         * @member {boolean} SHOW_LANGUAGE_BAR
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_LANGUAGE_BAR = false;
+
+        /**
+         * Settings SHOW_MIXED_COLUMN.
+         * @member {boolean} SHOW_MIXED_COLUMN
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_MIXED_COLUMN = false;
+
+        /**
+         * Settings SHOW_PASSAGETYPE_COLUMN.
+         * @member {boolean} SHOW_PASSAGETYPE_COLUMN
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_PASSAGETYPE_COLUMN = false;
+
+        /**
+         * Settings SHOW_SCHEDULE_COLUMN.
+         * @member {boolean} SHOW_SCHEDULE_COLUMN
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SHOW_SCHEDULE_COLUMN = false;
+
+        /**
+         * Settings SUPPRESS_COUNTDOWN_TIME_INCREMENT.
+         * @member {boolean} SUPPRESS_COUNTDOWN_TIME_INCREMENT
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.SUPPRESS_COUNTDOWN_TIME_INCREMENT = false;
+
+        /**
+         * Settings TIMESLIDER_ENABLED.
+         * @member {boolean} TIMESLIDER_ENABLED
+         * @memberof awesomepackage.Settings
+         * @instance
+         */
+        Settings.prototype.TIMESLIDER_ENABLED = false;
+
+        /**
+         * Creates a new Settings instance using the specified properties.
+         * @function create
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {awesomepackage.ISettings=} [properties] Properties to set
+         * @returns {awesomepackage.Settings} Settings instance
+         */
+        Settings.create = function create(properties) {
+            return new Settings(properties);
+        };
+
+        /**
+         * Encodes the specified Settings message. Does not implicitly {@link awesomepackage.Settings.verify|verify} messages.
+         * @function encode
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {awesomepackage.ISettings} message Settings message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Settings.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            if (message.AVAILABLE_LANGUAGES != null && message.AVAILABLE_LANGUAGES.length)
+                for (var i = 0; i < message.AVAILABLE_LANGUAGES.length; ++i)
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.AVAILABLE_LANGUAGES[i]);
+            if (message.DEFAULT_TIME_PREVIEW != null && message.hasOwnProperty("DEFAULT_TIME_PREVIEW"))
+                writer.uint32(/* id 2, wireType 0 =*/16).int32(message.DEFAULT_TIME_PREVIEW);
+            if (message.GEOLOCATION_ENABLED != null && message.hasOwnProperty("GEOLOCATION_ENABLED"))
+                writer.uint32(/* id 3, wireType 0 =*/24).bool(message.GEOLOCATION_ENABLED);
+            if (message.INITIAL_LAT != null && message.hasOwnProperty("INITIAL_LAT"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int64(message.INITIAL_LAT);
+            if (message.INITIAL_LON != null && message.hasOwnProperty("INITIAL_LON"))
+                writer.uint32(/* id 5, wireType 0 =*/40).int64(message.INITIAL_LON);
+            if (message.INITIAL_ZOOM != null && message.hasOwnProperty("INITIAL_ZOOM"))
+                writer.uint32(/* id 6, wireType 0 =*/48).int32(message.INITIAL_ZOOM);
+            if (message.LANGUAGE != null && message.hasOwnProperty("LANGUAGE"))
+                writer.uint32(/* id 7, wireType 2 =*/58).string(message.LANGUAGE);
+            if (message.MAP_ENABLED != null && message.hasOwnProperty("MAP_ENABLED"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.MAP_ENABLED);
+            if (message.MAP_SHOW_CONTROLS != null && message.hasOwnProperty("MAP_SHOW_CONTROLS"))
+                writer.uint32(/* id 9, wireType 0 =*/72).bool(message.MAP_SHOW_CONTROLS);
+            if (message.MAP_SHOW_PATTERNS != null && message.hasOwnProperty("MAP_SHOW_PATTERNS"))
+                writer.uint32(/* id 10, wireType 0 =*/80).bool(message.MAP_SHOW_PATTERNS);
+            if (message.MAP_SHOW_STOPS != null && message.hasOwnProperty("MAP_SHOW_STOPS"))
+                writer.uint32(/* id 11, wireType 0 =*/88).bool(message.MAP_SHOW_STOPS);
+            if (message.MAP_SHOW_VEHICLES != null && message.hasOwnProperty("MAP_SHOW_VEHICLES"))
+                writer.uint32(/* id 12, wireType 0 =*/96).bool(message.MAP_SHOW_VEHICLES);
+            if (message.MAX_ZOOM != null && message.hasOwnProperty("MAX_ZOOM"))
+                writer.uint32(/* id 13, wireType 0 =*/104).int32(message.MAX_ZOOM);
+            if (message.MIN_ZOOM != null && message.hasOwnProperty("MIN_ZOOM"))
+                writer.uint32(/* id 14, wireType 0 =*/112).int32(message.MIN_ZOOM);
+            if (message.MOBILE_ENABLED != null && message.hasOwnProperty("MOBILE_ENABLED"))
+                writer.uint32(/* id 15, wireType 0 =*/120).bool(message.MOBILE_ENABLED);
+            if (message.SEARCH_BY_ROUTES_ENABLED != null && message.hasOwnProperty("SEARCH_BY_ROUTES_ENABLED"))
+                writer.uint32(/* id 16, wireType 0 =*/128).bool(message.SEARCH_BY_ROUTES_ENABLED);
+            if (message.SEARCH_BY_STOPPOINTS_ENABLED != null && message.hasOwnProperty("SEARCH_BY_STOPPOINTS_ENABLED"))
+                writer.uint32(/* id 17, wireType 0 =*/136).bool(message.SEARCH_BY_STOPPOINTS_ENABLED);
+            if (message.SHOW_ABOUT_DEPARTURE_TEXT != null && message.hasOwnProperty("SHOW_ABOUT_DEPARTURE_TEXT"))
+                writer.uint32(/* id 18, wireType 0 =*/144).bool(message.SHOW_ABOUT_DEPARTURE_TEXT);
+            if (message.SHOW_ACTUAL_COLUMN != null && message.hasOwnProperty("SHOW_ACTUAL_COLUMN"))
+                writer.uint32(/* id 19, wireType 0 =*/152).bool(message.SHOW_ACTUAL_COLUMN);
+            if (message.SHOW_DEPARTING_TEXT != null && message.hasOwnProperty("SHOW_DEPARTING_TEXT"))
+                writer.uint32(/* id 20, wireType 0 =*/160).bool(message.SHOW_DEPARTING_TEXT);
+            if (message.SHOW_DEP_ARR_TEXT != null && message.hasOwnProperty("SHOW_DEP_ARR_TEXT"))
+                writer.uint32(/* id 21, wireType 0 =*/168).bool(message.SHOW_DEP_ARR_TEXT);
+            if (message.SHOW_LANGUAGE_BAR != null && message.hasOwnProperty("SHOW_LANGUAGE_BAR"))
+                writer.uint32(/* id 22, wireType 0 =*/176).bool(message.SHOW_LANGUAGE_BAR);
+            if (message.SHOW_MIXED_COLUMN != null && message.hasOwnProperty("SHOW_MIXED_COLUMN"))
+                writer.uint32(/* id 23, wireType 0 =*/184).bool(message.SHOW_MIXED_COLUMN);
+            if (message.SHOW_PASSAGETYPE_COLUMN != null && message.hasOwnProperty("SHOW_PASSAGETYPE_COLUMN"))
+                writer.uint32(/* id 24, wireType 0 =*/192).bool(message.SHOW_PASSAGETYPE_COLUMN);
+            if (message.SHOW_SCHEDULE_COLUMN != null && message.hasOwnProperty("SHOW_SCHEDULE_COLUMN"))
+                writer.uint32(/* id 25, wireType 0 =*/200).bool(message.SHOW_SCHEDULE_COLUMN);
+            if (message.SUPPRESS_COUNTDOWN_TIME_INCREMENT != null && message.hasOwnProperty("SUPPRESS_COUNTDOWN_TIME_INCREMENT"))
+                writer.uint32(/* id 26, wireType 0 =*/208).bool(message.SUPPRESS_COUNTDOWN_TIME_INCREMENT);
+            if (message.TIMESLIDER_ENABLED != null && message.hasOwnProperty("TIMESLIDER_ENABLED"))
+                writer.uint32(/* id 27, wireType 0 =*/216).bool(message.TIMESLIDER_ENABLED);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified Settings message, length delimited. Does not implicitly {@link awesomepackage.Settings.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {awesomepackage.ISettings} message Settings message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        Settings.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a Settings message from the specified reader or buffer.
+         * @function decode
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {awesomepackage.Settings} Settings
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Settings.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.awesomepackage.Settings();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    if (!(message.AVAILABLE_LANGUAGES && message.AVAILABLE_LANGUAGES.length))
+                        message.AVAILABLE_LANGUAGES = [];
+                    message.AVAILABLE_LANGUAGES.push(reader.string());
+                    break;
+                case 2:
+                    message.DEFAULT_TIME_PREVIEW = reader.int32();
+                    break;
+                case 3:
+                    message.GEOLOCATION_ENABLED = reader.bool();
+                    break;
+                case 4:
+                    message.INITIAL_LAT = reader.int64();
+                    break;
+                case 5:
+                    message.INITIAL_LON = reader.int64();
+                    break;
+                case 6:
+                    message.INITIAL_ZOOM = reader.int32();
+                    break;
+                case 7:
+                    message.LANGUAGE = reader.string();
+                    break;
+                case 8:
+                    message.MAP_ENABLED = reader.bool();
+                    break;
+                case 9:
+                    message.MAP_SHOW_CONTROLS = reader.bool();
+                    break;
+                case 10:
+                    message.MAP_SHOW_PATTERNS = reader.bool();
+                    break;
+                case 11:
+                    message.MAP_SHOW_STOPS = reader.bool();
+                    break;
+                case 12:
+                    message.MAP_SHOW_VEHICLES = reader.bool();
+                    break;
+                case 13:
+                    message.MAX_ZOOM = reader.int32();
+                    break;
+                case 14:
+                    message.MIN_ZOOM = reader.int32();
+                    break;
+                case 15:
+                    message.MOBILE_ENABLED = reader.bool();
+                    break;
+                case 16:
+                    message.SEARCH_BY_ROUTES_ENABLED = reader.bool();
+                    break;
+                case 17:
+                    message.SEARCH_BY_STOPPOINTS_ENABLED = reader.bool();
+                    break;
+                case 18:
+                    message.SHOW_ABOUT_DEPARTURE_TEXT = reader.bool();
+                    break;
+                case 19:
+                    message.SHOW_ACTUAL_COLUMN = reader.bool();
+                    break;
+                case 20:
+                    message.SHOW_DEPARTING_TEXT = reader.bool();
+                    break;
+                case 21:
+                    message.SHOW_DEP_ARR_TEXT = reader.bool();
+                    break;
+                case 22:
+                    message.SHOW_LANGUAGE_BAR = reader.bool();
+                    break;
+                case 23:
+                    message.SHOW_MIXED_COLUMN = reader.bool();
+                    break;
+                case 24:
+                    message.SHOW_PASSAGETYPE_COLUMN = reader.bool();
+                    break;
+                case 25:
+                    message.SHOW_SCHEDULE_COLUMN = reader.bool();
+                    break;
+                case 26:
+                    message.SUPPRESS_COUNTDOWN_TIME_INCREMENT = reader.bool();
+                    break;
+                case 27:
+                    message.TIMESLIDER_ENABLED = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a Settings message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {awesomepackage.Settings} Settings
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        Settings.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a Settings message.
+         * @function verify
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        Settings.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (message.AVAILABLE_LANGUAGES != null && message.hasOwnProperty("AVAILABLE_LANGUAGES")) {
+                if (!Array.isArray(message.AVAILABLE_LANGUAGES))
+                    return "AVAILABLE_LANGUAGES: array expected";
+                for (var i = 0; i < message.AVAILABLE_LANGUAGES.length; ++i)
+                    if (!$util.isString(message.AVAILABLE_LANGUAGES[i]))
+                        return "AVAILABLE_LANGUAGES: string[] expected";
+            }
+            if (message.DEFAULT_TIME_PREVIEW != null && message.hasOwnProperty("DEFAULT_TIME_PREVIEW"))
+                if (!$util.isInteger(message.DEFAULT_TIME_PREVIEW))
+                    return "DEFAULT_TIME_PREVIEW: integer expected";
+            if (message.GEOLOCATION_ENABLED != null && message.hasOwnProperty("GEOLOCATION_ENABLED"))
+                if (typeof message.GEOLOCATION_ENABLED !== "boolean")
+                    return "GEOLOCATION_ENABLED: boolean expected";
+            if (message.INITIAL_LAT != null && message.hasOwnProperty("INITIAL_LAT"))
+                if (!$util.isInteger(message.INITIAL_LAT) && !(message.INITIAL_LAT && $util.isInteger(message.INITIAL_LAT.low) && $util.isInteger(message.INITIAL_LAT.high)))
+                    return "INITIAL_LAT: integer|Long expected";
+            if (message.INITIAL_LON != null && message.hasOwnProperty("INITIAL_LON"))
+                if (!$util.isInteger(message.INITIAL_LON) && !(message.INITIAL_LON && $util.isInteger(message.INITIAL_LON.low) && $util.isInteger(message.INITIAL_LON.high)))
+                    return "INITIAL_LON: integer|Long expected";
+            if (message.INITIAL_ZOOM != null && message.hasOwnProperty("INITIAL_ZOOM"))
+                if (!$util.isInteger(message.INITIAL_ZOOM))
+                    return "INITIAL_ZOOM: integer expected";
+            if (message.LANGUAGE != null && message.hasOwnProperty("LANGUAGE"))
+                if (!$util.isString(message.LANGUAGE))
+                    return "LANGUAGE: string expected";
+            if (message.MAP_ENABLED != null && message.hasOwnProperty("MAP_ENABLED"))
+                if (typeof message.MAP_ENABLED !== "boolean")
+                    return "MAP_ENABLED: boolean expected";
+            if (message.MAP_SHOW_CONTROLS != null && message.hasOwnProperty("MAP_SHOW_CONTROLS"))
+                if (typeof message.MAP_SHOW_CONTROLS !== "boolean")
+                    return "MAP_SHOW_CONTROLS: boolean expected";
+            if (message.MAP_SHOW_PATTERNS != null && message.hasOwnProperty("MAP_SHOW_PATTERNS"))
+                if (typeof message.MAP_SHOW_PATTERNS !== "boolean")
+                    return "MAP_SHOW_PATTERNS: boolean expected";
+            if (message.MAP_SHOW_STOPS != null && message.hasOwnProperty("MAP_SHOW_STOPS"))
+                if (typeof message.MAP_SHOW_STOPS !== "boolean")
+                    return "MAP_SHOW_STOPS: boolean expected";
+            if (message.MAP_SHOW_VEHICLES != null && message.hasOwnProperty("MAP_SHOW_VEHICLES"))
+                if (typeof message.MAP_SHOW_VEHICLES !== "boolean")
+                    return "MAP_SHOW_VEHICLES: boolean expected";
+            if (message.MAX_ZOOM != null && message.hasOwnProperty("MAX_ZOOM"))
+                if (!$util.isInteger(message.MAX_ZOOM))
+                    return "MAX_ZOOM: integer expected";
+            if (message.MIN_ZOOM != null && message.hasOwnProperty("MIN_ZOOM"))
+                if (!$util.isInteger(message.MIN_ZOOM))
+                    return "MIN_ZOOM: integer expected";
+            if (message.MOBILE_ENABLED != null && message.hasOwnProperty("MOBILE_ENABLED"))
+                if (typeof message.MOBILE_ENABLED !== "boolean")
+                    return "MOBILE_ENABLED: boolean expected";
+            if (message.SEARCH_BY_ROUTES_ENABLED != null && message.hasOwnProperty("SEARCH_BY_ROUTES_ENABLED"))
+                if (typeof message.SEARCH_BY_ROUTES_ENABLED !== "boolean")
+                    return "SEARCH_BY_ROUTES_ENABLED: boolean expected";
+            if (message.SEARCH_BY_STOPPOINTS_ENABLED != null && message.hasOwnProperty("SEARCH_BY_STOPPOINTS_ENABLED"))
+                if (typeof message.SEARCH_BY_STOPPOINTS_ENABLED !== "boolean")
+                    return "SEARCH_BY_STOPPOINTS_ENABLED: boolean expected";
+            if (message.SHOW_ABOUT_DEPARTURE_TEXT != null && message.hasOwnProperty("SHOW_ABOUT_DEPARTURE_TEXT"))
+                if (typeof message.SHOW_ABOUT_DEPARTURE_TEXT !== "boolean")
+                    return "SHOW_ABOUT_DEPARTURE_TEXT: boolean expected";
+            if (message.SHOW_ACTUAL_COLUMN != null && message.hasOwnProperty("SHOW_ACTUAL_COLUMN"))
+                if (typeof message.SHOW_ACTUAL_COLUMN !== "boolean")
+                    return "SHOW_ACTUAL_COLUMN: boolean expected";
+            if (message.SHOW_DEPARTING_TEXT != null && message.hasOwnProperty("SHOW_DEPARTING_TEXT"))
+                if (typeof message.SHOW_DEPARTING_TEXT !== "boolean")
+                    return "SHOW_DEPARTING_TEXT: boolean expected";
+            if (message.SHOW_DEP_ARR_TEXT != null && message.hasOwnProperty("SHOW_DEP_ARR_TEXT"))
+                if (typeof message.SHOW_DEP_ARR_TEXT !== "boolean")
+                    return "SHOW_DEP_ARR_TEXT: boolean expected";
+            if (message.SHOW_LANGUAGE_BAR != null && message.hasOwnProperty("SHOW_LANGUAGE_BAR"))
+                if (typeof message.SHOW_LANGUAGE_BAR !== "boolean")
+                    return "SHOW_LANGUAGE_BAR: boolean expected";
+            if (message.SHOW_MIXED_COLUMN != null && message.hasOwnProperty("SHOW_MIXED_COLUMN"))
+                if (typeof message.SHOW_MIXED_COLUMN !== "boolean")
+                    return "SHOW_MIXED_COLUMN: boolean expected";
+            if (message.SHOW_PASSAGETYPE_COLUMN != null && message.hasOwnProperty("SHOW_PASSAGETYPE_COLUMN"))
+                if (typeof message.SHOW_PASSAGETYPE_COLUMN !== "boolean")
+                    return "SHOW_PASSAGETYPE_COLUMN: boolean expected";
+            if (message.SHOW_SCHEDULE_COLUMN != null && message.hasOwnProperty("SHOW_SCHEDULE_COLUMN"))
+                if (typeof message.SHOW_SCHEDULE_COLUMN !== "boolean")
+                    return "SHOW_SCHEDULE_COLUMN: boolean expected";
+            if (message.SUPPRESS_COUNTDOWN_TIME_INCREMENT != null && message.hasOwnProperty("SUPPRESS_COUNTDOWN_TIME_INCREMENT"))
+                if (typeof message.SUPPRESS_COUNTDOWN_TIME_INCREMENT !== "boolean")
+                    return "SUPPRESS_COUNTDOWN_TIME_INCREMENT: boolean expected";
+            if (message.TIMESLIDER_ENABLED != null && message.hasOwnProperty("TIMESLIDER_ENABLED"))
+                if (typeof message.TIMESLIDER_ENABLED !== "boolean")
+                    return "TIMESLIDER_ENABLED: boolean expected";
+            return null;
+        };
+
+        /**
+         * Creates a Settings message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {awesomepackage.Settings} Settings
+         */
+        Settings.fromObject = function fromObject(object) {
+            if (object instanceof $root.awesomepackage.Settings)
+                return object;
+            var message = new $root.awesomepackage.Settings();
+            if (object.AVAILABLE_LANGUAGES) {
+                if (!Array.isArray(object.AVAILABLE_LANGUAGES))
+                    throw TypeError(".awesomepackage.Settings.AVAILABLE_LANGUAGES: array expected");
+                message.AVAILABLE_LANGUAGES = [];
+                for (var i = 0; i < object.AVAILABLE_LANGUAGES.length; ++i)
+                    message.AVAILABLE_LANGUAGES[i] = String(object.AVAILABLE_LANGUAGES[i]);
+            }
+            if (object.DEFAULT_TIME_PREVIEW != null)
+                message.DEFAULT_TIME_PREVIEW = object.DEFAULT_TIME_PREVIEW | 0;
+            if (object.GEOLOCATION_ENABLED != null)
+                message.GEOLOCATION_ENABLED = Boolean(object.GEOLOCATION_ENABLED);
+            if (object.INITIAL_LAT != null)
+                if ($util.Long)
+                    (message.INITIAL_LAT = $util.Long.fromValue(object.INITIAL_LAT)).unsigned = false;
+                else if (typeof object.INITIAL_LAT === "string")
+                    message.INITIAL_LAT = parseInt(object.INITIAL_LAT, 10);
+                else if (typeof object.INITIAL_LAT === "number")
+                    message.INITIAL_LAT = object.INITIAL_LAT;
+                else if (typeof object.INITIAL_LAT === "object")
+                    message.INITIAL_LAT = new $util.LongBits(object.INITIAL_LAT.low >>> 0, object.INITIAL_LAT.high >>> 0).toNumber();
+            if (object.INITIAL_LON != null)
+                if ($util.Long)
+                    (message.INITIAL_LON = $util.Long.fromValue(object.INITIAL_LON)).unsigned = false;
+                else if (typeof object.INITIAL_LON === "string")
+                    message.INITIAL_LON = parseInt(object.INITIAL_LON, 10);
+                else if (typeof object.INITIAL_LON === "number")
+                    message.INITIAL_LON = object.INITIAL_LON;
+                else if (typeof object.INITIAL_LON === "object")
+                    message.INITIAL_LON = new $util.LongBits(object.INITIAL_LON.low >>> 0, object.INITIAL_LON.high >>> 0).toNumber();
+            if (object.INITIAL_ZOOM != null)
+                message.INITIAL_ZOOM = object.INITIAL_ZOOM | 0;
+            if (object.LANGUAGE != null)
+                message.LANGUAGE = String(object.LANGUAGE);
+            if (object.MAP_ENABLED != null)
+                message.MAP_ENABLED = Boolean(object.MAP_ENABLED);
+            if (object.MAP_SHOW_CONTROLS != null)
+                message.MAP_SHOW_CONTROLS = Boolean(object.MAP_SHOW_CONTROLS);
+            if (object.MAP_SHOW_PATTERNS != null)
+                message.MAP_SHOW_PATTERNS = Boolean(object.MAP_SHOW_PATTERNS);
+            if (object.MAP_SHOW_STOPS != null)
+                message.MAP_SHOW_STOPS = Boolean(object.MAP_SHOW_STOPS);
+            if (object.MAP_SHOW_VEHICLES != null)
+                message.MAP_SHOW_VEHICLES = Boolean(object.MAP_SHOW_VEHICLES);
+            if (object.MAX_ZOOM != null)
+                message.MAX_ZOOM = object.MAX_ZOOM | 0;
+            if (object.MIN_ZOOM != null)
+                message.MIN_ZOOM = object.MIN_ZOOM | 0;
+            if (object.MOBILE_ENABLED != null)
+                message.MOBILE_ENABLED = Boolean(object.MOBILE_ENABLED);
+            if (object.SEARCH_BY_ROUTES_ENABLED != null)
+                message.SEARCH_BY_ROUTES_ENABLED = Boolean(object.SEARCH_BY_ROUTES_ENABLED);
+            if (object.SEARCH_BY_STOPPOINTS_ENABLED != null)
+                message.SEARCH_BY_STOPPOINTS_ENABLED = Boolean(object.SEARCH_BY_STOPPOINTS_ENABLED);
+            if (object.SHOW_ABOUT_DEPARTURE_TEXT != null)
+                message.SHOW_ABOUT_DEPARTURE_TEXT = Boolean(object.SHOW_ABOUT_DEPARTURE_TEXT);
+            if (object.SHOW_ACTUAL_COLUMN != null)
+                message.SHOW_ACTUAL_COLUMN = Boolean(object.SHOW_ACTUAL_COLUMN);
+            if (object.SHOW_DEPARTING_TEXT != null)
+                message.SHOW_DEPARTING_TEXT = Boolean(object.SHOW_DEPARTING_TEXT);
+            if (object.SHOW_DEP_ARR_TEXT != null)
+                message.SHOW_DEP_ARR_TEXT = Boolean(object.SHOW_DEP_ARR_TEXT);
+            if (object.SHOW_LANGUAGE_BAR != null)
+                message.SHOW_LANGUAGE_BAR = Boolean(object.SHOW_LANGUAGE_BAR);
+            if (object.SHOW_MIXED_COLUMN != null)
+                message.SHOW_MIXED_COLUMN = Boolean(object.SHOW_MIXED_COLUMN);
+            if (object.SHOW_PASSAGETYPE_COLUMN != null)
+                message.SHOW_PASSAGETYPE_COLUMN = Boolean(object.SHOW_PASSAGETYPE_COLUMN);
+            if (object.SHOW_SCHEDULE_COLUMN != null)
+                message.SHOW_SCHEDULE_COLUMN = Boolean(object.SHOW_SCHEDULE_COLUMN);
+            if (object.SUPPRESS_COUNTDOWN_TIME_INCREMENT != null)
+                message.SUPPRESS_COUNTDOWN_TIME_INCREMENT = Boolean(object.SUPPRESS_COUNTDOWN_TIME_INCREMENT);
+            if (object.TIMESLIDER_ENABLED != null)
+                message.TIMESLIDER_ENABLED = Boolean(object.TIMESLIDER_ENABLED);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a Settings message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof awesomepackage.Settings
+         * @static
+         * @param {awesomepackage.Settings} message Settings
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        Settings.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.arrays || options.defaults)
+                object.AVAILABLE_LANGUAGES = [];
+            if (options.defaults) {
+                object.DEFAULT_TIME_PREVIEW = 0;
+                object.GEOLOCATION_ENABLED = false;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.INITIAL_LAT = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.INITIAL_LAT = options.longs === String ? "0" : 0;
+                if ($util.Long) {
+                    var long = new $util.Long(0, 0, false);
+                    object.INITIAL_LON = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
+                } else
+                    object.INITIAL_LON = options.longs === String ? "0" : 0;
+                object.INITIAL_ZOOM = 0;
+                object.LANGUAGE = "";
+                object.MAP_ENABLED = false;
+                object.MAP_SHOW_CONTROLS = false;
+                object.MAP_SHOW_PATTERNS = false;
+                object.MAP_SHOW_STOPS = false;
+                object.MAP_SHOW_VEHICLES = false;
+                object.MAX_ZOOM = 0;
+                object.MIN_ZOOM = 0;
+                object.MOBILE_ENABLED = false;
+                object.SEARCH_BY_ROUTES_ENABLED = false;
+                object.SEARCH_BY_STOPPOINTS_ENABLED = false;
+                object.SHOW_ABOUT_DEPARTURE_TEXT = false;
+                object.SHOW_ACTUAL_COLUMN = false;
+                object.SHOW_DEPARTING_TEXT = false;
+                object.SHOW_DEP_ARR_TEXT = false;
+                object.SHOW_LANGUAGE_BAR = false;
+                object.SHOW_MIXED_COLUMN = false;
+                object.SHOW_PASSAGETYPE_COLUMN = false;
+                object.SHOW_SCHEDULE_COLUMN = false;
+                object.SUPPRESS_COUNTDOWN_TIME_INCREMENT = false;
+                object.TIMESLIDER_ENABLED = false;
+            }
+            if (message.AVAILABLE_LANGUAGES && message.AVAILABLE_LANGUAGES.length) {
+                object.AVAILABLE_LANGUAGES = [];
+                for (var j = 0; j < message.AVAILABLE_LANGUAGES.length; ++j)
+                    object.AVAILABLE_LANGUAGES[j] = message.AVAILABLE_LANGUAGES[j];
+            }
+            if (message.DEFAULT_TIME_PREVIEW != null && message.hasOwnProperty("DEFAULT_TIME_PREVIEW"))
+                object.DEFAULT_TIME_PREVIEW = message.DEFAULT_TIME_PREVIEW;
+            if (message.GEOLOCATION_ENABLED != null && message.hasOwnProperty("GEOLOCATION_ENABLED"))
+                object.GEOLOCATION_ENABLED = message.GEOLOCATION_ENABLED;
+            if (message.INITIAL_LAT != null && message.hasOwnProperty("INITIAL_LAT"))
+                if (typeof message.INITIAL_LAT === "number")
+                    object.INITIAL_LAT = options.longs === String ? String(message.INITIAL_LAT) : message.INITIAL_LAT;
+                else
+                    object.INITIAL_LAT = options.longs === String ? $util.Long.prototype.toString.call(message.INITIAL_LAT) : options.longs === Number ? new $util.LongBits(message.INITIAL_LAT.low >>> 0, message.INITIAL_LAT.high >>> 0).toNumber() : message.INITIAL_LAT;
+            if (message.INITIAL_LON != null && message.hasOwnProperty("INITIAL_LON"))
+                if (typeof message.INITIAL_LON === "number")
+                    object.INITIAL_LON = options.longs === String ? String(message.INITIAL_LON) : message.INITIAL_LON;
+                else
+                    object.INITIAL_LON = options.longs === String ? $util.Long.prototype.toString.call(message.INITIAL_LON) : options.longs === Number ? new $util.LongBits(message.INITIAL_LON.low >>> 0, message.INITIAL_LON.high >>> 0).toNumber() : message.INITIAL_LON;
+            if (message.INITIAL_ZOOM != null && message.hasOwnProperty("INITIAL_ZOOM"))
+                object.INITIAL_ZOOM = message.INITIAL_ZOOM;
+            if (message.LANGUAGE != null && message.hasOwnProperty("LANGUAGE"))
+                object.LANGUAGE = message.LANGUAGE;
+            if (message.MAP_ENABLED != null && message.hasOwnProperty("MAP_ENABLED"))
+                object.MAP_ENABLED = message.MAP_ENABLED;
+            if (message.MAP_SHOW_CONTROLS != null && message.hasOwnProperty("MAP_SHOW_CONTROLS"))
+                object.MAP_SHOW_CONTROLS = message.MAP_SHOW_CONTROLS;
+            if (message.MAP_SHOW_PATTERNS != null && message.hasOwnProperty("MAP_SHOW_PATTERNS"))
+                object.MAP_SHOW_PATTERNS = message.MAP_SHOW_PATTERNS;
+            if (message.MAP_SHOW_STOPS != null && message.hasOwnProperty("MAP_SHOW_STOPS"))
+                object.MAP_SHOW_STOPS = message.MAP_SHOW_STOPS;
+            if (message.MAP_SHOW_VEHICLES != null && message.hasOwnProperty("MAP_SHOW_VEHICLES"))
+                object.MAP_SHOW_VEHICLES = message.MAP_SHOW_VEHICLES;
+            if (message.MAX_ZOOM != null && message.hasOwnProperty("MAX_ZOOM"))
+                object.MAX_ZOOM = message.MAX_ZOOM;
+            if (message.MIN_ZOOM != null && message.hasOwnProperty("MIN_ZOOM"))
+                object.MIN_ZOOM = message.MIN_ZOOM;
+            if (message.MOBILE_ENABLED != null && message.hasOwnProperty("MOBILE_ENABLED"))
+                object.MOBILE_ENABLED = message.MOBILE_ENABLED;
+            if (message.SEARCH_BY_ROUTES_ENABLED != null && message.hasOwnProperty("SEARCH_BY_ROUTES_ENABLED"))
+                object.SEARCH_BY_ROUTES_ENABLED = message.SEARCH_BY_ROUTES_ENABLED;
+            if (message.SEARCH_BY_STOPPOINTS_ENABLED != null && message.hasOwnProperty("SEARCH_BY_STOPPOINTS_ENABLED"))
+                object.SEARCH_BY_STOPPOINTS_ENABLED = message.SEARCH_BY_STOPPOINTS_ENABLED;
+            if (message.SHOW_ABOUT_DEPARTURE_TEXT != null && message.hasOwnProperty("SHOW_ABOUT_DEPARTURE_TEXT"))
+                object.SHOW_ABOUT_DEPARTURE_TEXT = message.SHOW_ABOUT_DEPARTURE_TEXT;
+            if (message.SHOW_ACTUAL_COLUMN != null && message.hasOwnProperty("SHOW_ACTUAL_COLUMN"))
+                object.SHOW_ACTUAL_COLUMN = message.SHOW_ACTUAL_COLUMN;
+            if (message.SHOW_DEPARTING_TEXT != null && message.hasOwnProperty("SHOW_DEPARTING_TEXT"))
+                object.SHOW_DEPARTING_TEXT = message.SHOW_DEPARTING_TEXT;
+            if (message.SHOW_DEP_ARR_TEXT != null && message.hasOwnProperty("SHOW_DEP_ARR_TEXT"))
+                object.SHOW_DEP_ARR_TEXT = message.SHOW_DEP_ARR_TEXT;
+            if (message.SHOW_LANGUAGE_BAR != null && message.hasOwnProperty("SHOW_LANGUAGE_BAR"))
+                object.SHOW_LANGUAGE_BAR = message.SHOW_LANGUAGE_BAR;
+            if (message.SHOW_MIXED_COLUMN != null && message.hasOwnProperty("SHOW_MIXED_COLUMN"))
+                object.SHOW_MIXED_COLUMN = message.SHOW_MIXED_COLUMN;
+            if (message.SHOW_PASSAGETYPE_COLUMN != null && message.hasOwnProperty("SHOW_PASSAGETYPE_COLUMN"))
+                object.SHOW_PASSAGETYPE_COLUMN = message.SHOW_PASSAGETYPE_COLUMN;
+            if (message.SHOW_SCHEDULE_COLUMN != null && message.hasOwnProperty("SHOW_SCHEDULE_COLUMN"))
+                object.SHOW_SCHEDULE_COLUMN = message.SHOW_SCHEDULE_COLUMN;
+            if (message.SUPPRESS_COUNTDOWN_TIME_INCREMENT != null && message.hasOwnProperty("SUPPRESS_COUNTDOWN_TIME_INCREMENT"))
+                object.SUPPRESS_COUNTDOWN_TIME_INCREMENT = message.SUPPRESS_COUNTDOWN_TIME_INCREMENT;
+            if (message.TIMESLIDER_ENABLED != null && message.hasOwnProperty("TIMESLIDER_ENABLED"))
+                object.TIMESLIDER_ENABLED = message.TIMESLIDER_ENABLED;
+            return object;
+        };
+
+        /**
+         * Converts this Settings to JSON.
+         * @function toJSON
+         * @memberof awesomepackage.Settings
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        Settings.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return Settings;
+    })();
+
     return awesomepackage;
 })();
 

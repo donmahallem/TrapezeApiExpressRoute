@@ -83,6 +83,7 @@ describe('endpoints/stop.ts', (): void => {
                     expect(promiseStub.callCount).to.equal(1);
                     expect(promiseStub.getCall(0).args).to.deep.equal([
                         methodStubResponse,
+                        undefined,
                         res,
                         next,
                     ]);
