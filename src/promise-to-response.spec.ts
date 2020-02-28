@@ -2,21 +2,21 @@
  * Source https://github.com/donmahallem/TrapezeApiExpressRoute
  */
 
-import { expect } from "chai";
-import "mocha";
-import * as sinon from "sinon";
-import { promiseToResponse } from "./promise-to-response";
-describe("promise-to-response.ts", () => {
-    describe("promiseToResponse(prom,res)", () => {
+import { expect } from 'chai';
+import 'mocha';
+import * as sinon from 'sinon';
+import { promiseToResponse } from './promise-to-response';
+describe('promise-to-response.ts', (): void => {
+    describe('promiseToResponse(prom,res)', (): void => {
         let jsonSpy: sinon.SinonSpy;
         let nextSpy: sinon.SinonSpy;
         let statusStub: sinon.SinonStub;
         let resObj: any;
         const testResponse: any = {
             success: true,
-            test: "response",
+            test: 'response',
         };
-        before(() => {
+        before((): void => {
             jsonSpy = sinon.spy();
             nextSpy = sinon.spy();
             statusStub = sinon.stub();
@@ -26,21 +26,21 @@ describe("promise-to-response.ts", () => {
             };
             statusStub.returns(resObj);
         });
-        afterEach(() => {
+        afterEach((): void => {
             jsonSpy.resetHistory();
             nextSpy.resetHistory();
             statusStub.resetHistory();
         });
-        describe("promise resolves", () => {
-            [true, false].forEach((nextProvided) => {
-                describe("next parameter " + (nextProvided ? "" : "not") + " provided", () => {
-                    it("should forward the resolved value to the response", (done) => {
+        describe('promise resolves', (): void => {
+            [true, false].forEach((nextProvided: boolean): void => {
+                describe('next parameter ' + (nextProvided ? '' : 'not') + ' provided', (): void => {
+                    it('should forward the resolved value to the response', (done: Mocha.Done): void => {
                         if (nextProvided) {
                             promiseToResponse(Promise.resolve(testResponse), resObj, nextSpy);
                         } else {
                             promiseToResponse(Promise.resolve(testResponse), resObj);
                         }
-                        setTimeout(() => {
+                        setTimeout((): void => {
                             expect(nextSpy.callCount).to.equal(0);
                             expect(statusStub.callCount).to.equal(1);
                             expect(jsonSpy.callCount).to.equal(1);
@@ -52,11 +52,11 @@ describe("promise-to-response.ts", () => {
                 });
             });
         });
-        describe("promise rejects", () => {
+        describe('promise rejects', (): void => {
             const testErrors: any[] = [
                 {
                     error: {
-                        message: "another message",
+                        message: 'another message',
                         statusCode: 400,
                     },
                     response: {
@@ -64,17 +64,17 @@ describe("promise-to-response.ts", () => {
                     },
                 },
                 {
-                    error: new Error("test erorr"),
+                    error: new Error('test erorr'),
                     response: {
                         statusCode: 500,
                     },
                 },
             ];
-            describe("next parameter provided", () => {
-                testErrors.forEach((testError) => {
-                    it("should forward the error to the next function", (done) => {
+            describe('next parameter provided', (): void => {
+                testErrors.forEach((testError: any): void => {
+                    it('should forward the error to the next function', (done: Mocha.Done): void => {
                         promiseToResponse(Promise.reject(testError.error), resObj, nextSpy);
-                        setTimeout(() => {
+                        setTimeout((): void => {
                             expect(nextSpy.callCount).to.equal(1);
                             expect(statusStub.callCount).to.equal(0);
                             expect(jsonSpy.callCount).to.equal(0);
@@ -84,11 +84,11 @@ describe("promise-to-response.ts", () => {
                     });
                 });
             });
-            describe("next parameter not provided", () => {
-                testErrors.forEach((testError) => {
-                    it("should forward the error to the next function", (done) => {
+            describe('next parameter not provided', (): void => {
+                testErrors.forEach((testError: any): void => {
+                    it('should forward the error to the next function', (done: Mocha.Done): void => {
                         promiseToResponse(Promise.reject(testError.error), resObj);
-                        setTimeout(() => {
+                        setTimeout((): void => {
                             expect(nextSpy.callCount).to.equal(0);
                             expect(statusStub.callCount).to.equal(1);
                             expect(jsonSpy.callCount).to.equal(1);
