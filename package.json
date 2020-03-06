@@ -26,7 +26,7 @@
         "test:watch": "mocha --watch"
     },
     "dependencies": {
-        "@donmahallem/trapeze-api-client": "~4.1.0",
+        "@donmahallem/trapeze-api-client": "~5.0.4",
         "express": "~4.17.1",
         "jsonschema": "~1.2.5",
         "request": "~2.88.2",
